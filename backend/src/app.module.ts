@@ -1,7 +1,9 @@
 import { isAuthenticated } from 'app.middleware';
+import { BidController } from 'bid/bid.controller';
 import { Bid } from 'bid/bid.entity';
 import { BidModule } from 'bid/bid.module';
 import { redisStore } from 'cache-manager-redis-yet';
+import { ItemController } from 'item/item.controller';
 import { Item } from 'item/item.entity';
 import { ItemModule } from 'item/item.module';
 import { UserController } from 'user/user.controller';
@@ -71,6 +73,10 @@ export class AppModule {
         { path: 'api/v1/user/signin', method: RequestMethod.POST },
         { path: 'api/v1/user/signup', method: RequestMethod.POST },
       )
-      .forRoutes(UserController);
+      .forRoutes(
+        UserController,
+        ItemController,
+        BidController
+      );
   }
 }

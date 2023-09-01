@@ -2,13 +2,15 @@ import { UserRequest } from 'app.middleware';
 
 import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post, Req } from '@nestjs/common';
 import {
-    ApiCreatedResponse, ApiNotFoundResponse, ApiOkResponse, ApiTags, ApiUnauthorizedResponse
+    ApiBearerAuth, ApiCreatedResponse, ApiNotFoundResponse, ApiOkResponse, ApiTags,
+    ApiUnauthorizedResponse
 } from '@nestjs/swagger';
 
 import { Bid } from './bid.entity';
 import { BidService } from './bid.service';
 import { BidCreateDto } from './dto/bid-create.dto';
 
+@ApiBearerAuth()
 @ApiTags('Bids')
 @Controller('/api/v1/bids')
 export class BidController {

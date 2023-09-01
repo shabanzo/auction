@@ -2,7 +2,8 @@ import { UserRequest } from 'app.middleware';
 
 import { Body, Controller, HttpCode, HttpStatus, Post, Req } from '@nestjs/common';
 import {
-    ApiConflictResponse, ApiCreatedResponse, ApiOkResponse, ApiTags, ApiUnauthorizedResponse
+    ApiBearerAuth, ApiConflictResponse, ApiCreatedResponse, ApiOkResponse, ApiTags,
+    ApiUnauthorizedResponse
 } from '@nestjs/swagger';
 
 import { UserDepositDto } from './dto/user-deposit.dto';
@@ -36,6 +37,7 @@ export class UserController {
   }
 
   @Post('/deposit')
+  @ApiBearerAuth()
   @ApiOkResponse({ description: 'Deposit successful' })
   @ApiUnauthorizedResponse({ description: 'You are not authorized' })
   @HttpCode(HttpStatus.OK)

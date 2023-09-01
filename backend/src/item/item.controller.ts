@@ -4,7 +4,8 @@ import {
     Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Put, Req
 } from '@nestjs/common';
 import {
-    ApiCreatedResponse, ApiNoContentResponse, ApiNotFoundResponse, ApiOkResponse, ApiTags
+    ApiBearerAuth, ApiCreatedResponse, ApiNoContentResponse, ApiNotFoundResponse, ApiOkResponse,
+    ApiTags
 } from '@nestjs/swagger';
 
 import { ItemCreateDto } from './dto/item-create.dto';
@@ -12,6 +13,7 @@ import { ItemUpdateDto } from './dto/item-update.dto';
 import { Item } from './item.entity';
 import { ItemService } from './item.service';
 
+@ApiBearerAuth()
 @ApiTags('Items')
 @Controller('/api/v1/items')
 export class ItemController {
