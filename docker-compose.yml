@@ -4,7 +4,7 @@ services:
     container_name: backend
     build:
       dockerfile: Dockerfile
-      context: .
+      context: ./backend
       target: development
     volumes:
       - .:/usr/src/app
