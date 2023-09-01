@@ -1,7 +1,6 @@
-import { ItemPublishDto } from 'item/dto/item-publish.dto';
 import { Repository } from 'typeorm';
 
-import { NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
@@ -114,43 +113,6 @@ describe('ItemService', () => {
       const id = 1;
       mockRepository.findOneBy.mockResolvedValue(undefined);
       await expect(itemService.delete(id)).rejects.toThrowError(NotFoundException);
-    });
-  });
-
-  describe('publishItem', () => {
-    it('should publish an item if it belongs to the user', async () => {
-      const user = { id: 1 };
-      const itemId = 1;
-      const item = { id: itemId, user: { id: 1 } } as Item;
-      const itemPublishDto: ItemPublishDto = { itemId };
-
-      mockRepository.findOneBy.mockResolvedValue(item);
-
-      await itemService.publishItem(user as any, itemPublishDto);
-
-      expect(mockRepository.findOneBy).toHaveBeenCalledWith({ id: itemId });
-      expect(mockRepository.save).toHaveBeenCalledWith(item);
-    });
-
-    it('should throw NotFoundException if the item does not exist', async () => {
-      const user = { id: 1 };
-      const itemId = 1;
-      const itemPublishDto: ItemPublishDto = { itemId };
-
-      mockRepository.findOneBy.mockResolvedValue(undefined);
-
-      await expect(itemService.publishItem(user as any, itemPublishDto)).rejects.toThrowError(NotFoundException);
-    });
-
-    it('should throw UnauthorizedException if the item does not belong to the user', async () => {
-      const user = { id: 1 };
-      const itemId = 1;
-      const item = { id: itemId, user: { id: 2 } } as Item;
-      const itemPublishDto: ItemPublishDto = { itemId };
-
-      mockRepository.findOneBy.mockResolvedValue(item);
-
-      await expect(itemService.publishItem(user as any, itemPublishDto)).rejects.toThrowError(UnauthorizedException);
     });
   });
 });

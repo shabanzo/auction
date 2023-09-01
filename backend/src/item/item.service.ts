@@ -1,11 +1,10 @@
 import { Not, Repository } from 'typeorm';
 
-import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { User } from '../user/user.entity';
 import { ItemCreateDto } from './dto/item-create.dto';
-import { ItemPublishDto } from './dto/item-publish.dto';
 import { ItemUpdateDto } from './dto/item-update.dto';
 import { Item } from './item.entity';
 
@@ -50,23 +49,5 @@ export class ItemService {
       throw new NotFoundException(`Item with ID ${id} not found`);
     }
     await this.itemRepository.remove(item);
-  }
-
-  async publishItem(user: User, itemPublishDto: ItemPublishDto): Promise<Item> {
-    const { itemId } = itemPublishDto;
-
-    const item = await this.itemRepository.findOneBy({ id: itemId });
-
-    if (!item) {
-      throw new NotFoundException(`Item with ID ${itemId} not found`);
-    }
-
-    if (item.user.id !== user.id) {
-      throw new UnauthorizedException('You do not have permission to publish this item');
-    }
-
-    item.published = true;
-
-    return this.itemRepository.save(item);
   }
 }
