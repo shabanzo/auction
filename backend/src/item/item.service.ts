@@ -101,12 +101,4 @@ export class ItemService {
 
     return await this.itemRepository.save(item);
   }
-
-  async delete(id: number): Promise<void> {
-    const item = await this.itemRepository.findOneBy({ id });
-    if (!item) {
-      throw new NotFoundException(`Item with ID ${id} not found`);
-    }
-    await this.itemRepository.remove(item);
-  }
 }

@@ -149,23 +149,4 @@ describe('ItemService', () => {
       );
     });
   });
-
-  describe('delete', () => {
-    it('should delete an item', async () => {
-      const id = 1;
-      const item = { id, name: 'Item 1' };
-      mockRepository.findOneBy.mockResolvedValue(item);
-      await itemService.delete(id);
-      expect(mockRepository.findOneBy).toHaveBeenCalledWith({ id });
-      expect(mockRepository.remove).toHaveBeenCalledWith(item);
-    });
-
-    it('should throw NotFoundException if item is not found', async () => {
-      const id = 1;
-      mockRepository.findOneBy.mockResolvedValue(undefined);
-      await expect(itemService.delete(id)).rejects.toThrowError(
-        NotFoundException,
-      );
-    });
-  });
 });

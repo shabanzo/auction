@@ -1,11 +1,10 @@
 import { UserRequest } from 'app.middleware';
 
 import {
-    Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Put, Query, Req
+    Body, Controller, Get, HttpCode, HttpStatus, Param, Post, Put, Query, Req
 } from '@nestjs/common';
 import {
-    ApiBearerAuth, ApiCreatedResponse, ApiNoContentResponse, ApiNotFoundResponse, ApiOkResponse,
-    ApiTags
+    ApiBearerAuth, ApiCreatedResponse, ApiNotFoundResponse, ApiOkResponse, ApiTags
 } from '@nestjs/swagger';
 
 import { ItemCreateDto } from './dto/item-create.dto';
@@ -53,13 +52,5 @@ export class ItemController {
   @HttpCode(HttpStatus.OK)
   async update(@Param('id') id: number, @Body() itemUpdateDto: ItemUpdateDto) {
     return this.itemService.update(id, itemUpdateDto);
-  }
-
-  @Delete(':id')
-  @ApiNoContentResponse({ description: 'Item deleted successfully' })
-  @ApiNotFoundResponse({ description: 'Item is not found' })
-  @HttpCode(HttpStatus.NO_CONTENT)
-  async delete(@Param('id') id: number) {
-    return this.itemService.delete(id);
   }
 }

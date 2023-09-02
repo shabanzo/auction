@@ -185,16 +185,4 @@ describe('ItemController', () => {
       expect(result).toEqual(updatedItem);
     });
   });
-
-  describe('delete', () => {
-    it('should delete an item', async () => {
-      const itemId = 7;
-      mockItemService.delete.mockResolvedValue(undefined);
-
-      const result = await itemController.delete(itemId);
-
-      expect(mockItemService.delete).toHaveBeenCalledWith(itemId);
-      expect(result).toBeUndefined();
-    });
-  });
 });
