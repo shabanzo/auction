@@ -58,6 +58,9 @@ export class ItemService {
       .createQueryBuilder('item')
       .where('item.user <> :userId', { userId: user.id })
       .andWhere('item.publishedAt IS NOT NULL')
+      .andWhere(
+        `NOW() < (item.publishedAt + INTERVAL '1 hour' * item.timeWindowHours)`
+      )
       .skip((page - 1) * limit)
       .take(limit);
     const items = await queryBuilder.getMany();
