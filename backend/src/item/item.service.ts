@@ -82,10 +82,11 @@ export class ItemService {
       .getCount();
   }
 
-  async create(itemDto: ItemCreateDto): Promise<Item> {
+  async create(user: User, itemDto: ItemCreateDto): Promise<Item> {
     const newItem = {
       ...itemDto,
       currentPrice: itemDto.startingPrice,
+      user
     };
     const item = this.itemRepository.create(newItem);
     return this.itemRepository.save(item);

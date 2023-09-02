@@ -1,25 +1,11 @@
 import { UserRequest } from 'app.middleware';
 
 import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  HttpCode,
-  HttpStatus,
-  Param,
-  Post,
-  Put,
-  Query,
-  Req,
+    Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Put, Query, Req
 } from '@nestjs/common';
 import {
-  ApiBearerAuth,
-  ApiCreatedResponse,
-  ApiNoContentResponse,
-  ApiNotFoundResponse,
-  ApiOkResponse,
-  ApiTags,
+    ApiBearerAuth, ApiCreatedResponse, ApiNoContentResponse, ApiNotFoundResponse, ApiOkResponse,
+    ApiTags
 } from '@nestjs/swagger';
 
 import { ItemCreateDto } from './dto/item-create.dto';
@@ -57,8 +43,8 @@ export class ItemController {
   @Post()
   @ApiCreatedResponse({ description: 'Item created successfully' })
   @HttpCode(HttpStatus.CREATED)
-  async create(@Body() itemCreateDto: ItemCreateDto) {
-    return this.itemService.create(itemCreateDto);
+  async create(@Req() req: UserRequest, @Body() itemCreateDto: ItemCreateDto) {
+    return this.itemService.create(req.user, itemCreateDto);
   }
 
   @Put(':id')

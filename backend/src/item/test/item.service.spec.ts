@@ -87,19 +87,31 @@ describe('ItemService', () => {
   });
 
   describe('create', () => {
+    const user = {
+        id: 1,
+        email: 'test@example.com',
+        password: 'hashed-password',
+        walletBalance: 100,
+        items: [],
+        bids: [],
+      };
     it('should create and return an item', async () => {
       const itemDto = {
         name: 'Item 1',
-        currentPrice: 10,
         startingPrice: 10,
         timeWindowHours: 24,
+      };
+
+      const itemAttr = {
+        ...itemDto,
+        user: user,
+        currentPrice: 10,
       };
       const createdItem = { ...itemDto, id: 1 };
       mockRepository.create.mockReturnValue(itemDto);
       mockRepository.save.mockReturnValue(createdItem);
-      const result = await itemService.create(itemDto);
-      expect(mockRepository.create).toHaveBeenCalledWith(itemDto);
-      expect(mockRepository.save).toHaveBeenCalledWith(itemDto);
+      const result = await itemService.create(user, itemDto);
+      expect(mockRepository.create).toHaveBeenCalledWith(itemAttr);
       expect(result).toEqual(createdItem);
     });
   });

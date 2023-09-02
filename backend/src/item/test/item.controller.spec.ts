@@ -150,11 +150,12 @@ describe('ItemController', () => {
         user: mockUserRequest.user,
         bids: [],
       };
+
       mockItemService.create.mockResolvedValue(createdItem);
 
-      const result = await itemController.create(itemCreateDto);
+      const result = await itemController.create(mockUserRequest, itemCreateDto);
 
-      expect(mockItemService.create).toHaveBeenCalledWith(itemCreateDto);
+      expect(mockItemService.create).toHaveBeenCalledWith(mockUserRequest.user, itemCreateDto);
       expect(result).toEqual(createdItem);
     });
   });
