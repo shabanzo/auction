@@ -72,9 +72,13 @@ describe('UserController', () => {
 
       jest
         .spyOn(userService, 'signup')
-        .mockRejectedValue(new HttpException('Email already exists', HttpStatus.CONFLICT));
+        .mockRejectedValue(
+          new HttpException('Email already exists', HttpStatus.CONFLICT),
+        );
 
-      await expect(userController.Signup(userSignupDto)).rejects.toThrowError(HttpException);
+      await expect(userController.Signup(userSignupDto)).rejects.toThrowError(
+        HttpException,
+      );
     });
   });
 
@@ -113,9 +117,16 @@ describe('UserController', () => {
 
       jest
         .spyOn(userService, 'signin')
-        .mockRejectedValue(new HttpException('Incorrect username or password', HttpStatus.UNAUTHORIZED));
+        .mockRejectedValue(
+          new HttpException(
+            'Incorrect username or password',
+            HttpStatus.UNAUTHORIZED,
+          ),
+        );
 
-      await expect(userController.Signin(userSigninDto)).rejects.toThrowError(HttpException);
+      await expect(userController.Signin(userSigninDto)).rejects.toThrowError(
+        HttpException,
+      );
     });
   });
 

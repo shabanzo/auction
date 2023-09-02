@@ -1,4 +1,10 @@
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 import { Bid } from '../bid/bid.entity';
 import { User } from '../user/user.entity';
@@ -11,8 +17,11 @@ export class Item {
   @Column({ type: 'varchar' })
   name: string;
 
-  @Column({ type: 'decimal', precision: 5, scale: 2 })
+  @Column({ type: 'decimal', precision: 10, scale: 2 })
   startingPrice: number;
+
+  @Column({ type: 'decimal', precision: 10, scale: 2 })
+  currentPrice: number;
 
   @Column({ type: 'int' })
   timeWindowHours: number;
@@ -20,9 +29,9 @@ export class Item {
   @Column({ type: 'timestamptz', default: null })
   publishedAt: Date;
 
-  @ManyToOne(() => User, user => user.items)
+  @ManyToOne(() => User, (user) => user.items)
   user: User;
 
-  @OneToMany(() => Bid, bid => bid.user)
+  @OneToMany(() => Bid, (bid) => bid.user)
   bids: Bid[];
 }

@@ -1,9 +1,20 @@
 import { UserRequest } from 'app.middleware';
 
-import { Body, Controller, HttpCode, HttpStatus, Post, Req } from '@nestjs/common';
 import {
-    ApiBearerAuth, ApiConflictResponse, ApiCreatedResponse, ApiOkResponse, ApiTags,
-    ApiUnauthorizedResponse
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Req,
+} from '@nestjs/common';
+import {
+  ApiBearerAuth,
+  ApiConflictResponse,
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiTags,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 
 import { UserDepositDto } from './dto/user-deposit.dto';
@@ -14,9 +25,7 @@ import { UserService } from './user.service';
 @ApiTags('Users')
 @Controller('/api/v1/user')
 export class UserController {
-  constructor(
-    private readonly userService: UserService
-  ) { }
+  constructor(private readonly userService: UserService) {}
 
   @Post('/signup')
   @ApiCreatedResponse({ description: 'User created successfully' })
@@ -41,7 +50,10 @@ export class UserController {
   @ApiOkResponse({ description: 'Deposit successful' })
   @ApiUnauthorizedResponse({ description: 'You are not authorized' })
   @HttpCode(HttpStatus.OK)
-  async Deposit(@Req() req: UserRequest, @Body() depositDto: UserDepositDto): Promise<any> {
+  async Deposit(
+    @Req() req: UserRequest,
+    @Body() depositDto: UserDepositDto,
+  ): Promise<any> {
     const result = await this.userService.deposit(req.user, depositDto);
     return result;
   }

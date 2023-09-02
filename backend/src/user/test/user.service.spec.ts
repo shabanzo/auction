@@ -58,7 +58,7 @@ describe('UserService', () => {
         id: 1,
         email: userDto.email,
         password: hashedPassword,
-        walletBalance: 0
+        walletBalance: 0,
       };
 
       mockUserRepository.findOneBy.mockResolvedValue(null);
@@ -69,7 +69,9 @@ describe('UserService', () => {
 
       const result = await userService.signup(userDto);
 
-      expect(mockUserRepository.findOneBy).toHaveBeenCalledWith({ email: userDto.email });
+      expect(mockUserRepository.findOneBy).toHaveBeenCalledWith({
+        email: userDto.email,
+      });
       expect(bcrypt.genSalt).toHaveBeenCalled();
       expect(bcrypt.hash).toHaveBeenCalledWith(userDto.password, salt);
       expect(mockUserRepository.create).toHaveBeenCalledWith({
@@ -93,7 +95,9 @@ describe('UserService', () => {
 
       mockUserRepository.findOneBy.mockResolvedValue({ email: userDto.email });
 
-      await expect(userService.signup(userDto)).rejects.toThrowError(HttpException);
+      await expect(userService.signup(userDto)).rejects.toThrowError(
+        HttpException,
+      );
     });
   });
 
@@ -116,9 +120,16 @@ describe('UserService', () => {
 
       const result = await userService.signin(userDto);
 
-      expect(mockUserRepository.findOneBy).toHaveBeenCalledWith({ email: userDto.email });
-      expect(bcrypt.compare).toHaveBeenCalledWith(userDto.password, user.password);
-      expect(mockJwtService.sign).toHaveBeenCalledWith({ email: userDto.email });
+      expect(mockUserRepository.findOneBy).toHaveBeenCalledWith({
+        email: userDto.email,
+      });
+      expect(bcrypt.compare).toHaveBeenCalledWith(
+        userDto.password,
+        user.password,
+      );
+      expect(mockJwtService.sign).toHaveBeenCalledWith({
+        email: userDto.email,
+      });
       expect(result).toEqual({
         email: userDto.email,
         token,
@@ -139,7 +150,9 @@ describe('UserService', () => {
       mockUserRepository.findOneBy.mockResolvedValue(user);
       jest.spyOn(bcrypt, 'compare').mockResolvedValue(false);
 
-      await expect(userService.signin(userDto)).rejects.toThrowError(HttpException);
+      await expect(userService.signin(userDto)).rejects.toThrowError(
+        HttpException,
+      );
     });
   });
 

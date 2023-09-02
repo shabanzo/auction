@@ -8,10 +8,10 @@ export class Bid {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => User, user => user.bids)
+  @ManyToOne(() => User, (user) => user.bids)
   user: User;
 
-  @ManyToOne(() => Item, item => item.bids)
+  @ManyToOne(() => Item, (item) => item.bids)
   item: Item;
 
   @Column({ type: 'decimal', precision: 5, scale: 2 })

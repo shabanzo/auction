@@ -30,7 +30,7 @@ export class UserService {
     const reqBody = {
       email: userDto.email,
       password: hash,
-      walletBalance: 0
+      walletBalance: 0,
     };
     const newUser = await this.userRepository.create(reqBody);
     this.userRepository.save(newUser);
@@ -38,7 +38,7 @@ export class UserService {
       id: newUser.id,
       email: newUser.email,
       walletBalance: newUser.walletBalance,
-    }
+    };
   }
 
   async signin(userDto: UserSigninDto): Promise<any> {
@@ -51,7 +51,10 @@ export class UserService {
         token: this.jwtService.sign(payload),
       };
     }
-    throw new HttpException('Incorrect username or password', HttpStatus.UNAUTHORIZED);
+    throw new HttpException(
+      'Incorrect username or password',
+      HttpStatus.UNAUTHORIZED,
+    );
   }
 
   async findByEmail(email: string): Promise<User> {

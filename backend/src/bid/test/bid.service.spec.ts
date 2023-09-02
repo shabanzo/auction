@@ -62,7 +62,9 @@ describe('BidService', () => {
       expect(mockCacheService.get).toHaveBeenCalledWith(`u1i2`);
       expect(mockCacheService.set).toHaveBeenCalledWith(`u1i2`, true, 5);
       expect(mockBidRepository.create).toHaveBeenCalledWith(bidDto);
-      expect(mockBidRepository.save).toHaveBeenCalledWith(expect.objectContaining(bidDto));
+      expect(mockBidRepository.save).toHaveBeenCalledWith(
+        expect.objectContaining(bidDto),
+      );
       expect(result).toEqual(createdBid);
     });
 
@@ -74,7 +76,9 @@ describe('BidService', () => {
 
       jest.spyOn(mockCacheService, 'set').mockResolvedValue(undefined);
 
-      await expect(bidService.create(user as any, bidDto)).rejects.toThrowError(NotFoundException);
+      await expect(bidService.create(user as any, bidDto)).rejects.toThrowError(
+        NotFoundException,
+      );
 
       expect(mockCacheService.get).toHaveBeenCalledWith(`u1i2`);
       expect(mockCacheService.set).toHaveBeenCalled();

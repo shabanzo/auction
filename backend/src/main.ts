@@ -9,15 +9,17 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.enableCors({ origin: '*' })
-  app.useGlobalPipes(new ValidationPipe({}))
-  app.enableVersioning({ type: VersioningType.URI })
-  app.use(helmet())
-  app.use(compression())
+  app.enableCors({ origin: '*' });
+  app.useGlobalPipes(new ValidationPipe({}));
+  app.enableVersioning({ type: VersioningType.URI });
+  app.use(helmet());
+  app.use(compression());
 
   const config = new DocumentBuilder()
     .setTitle('Auction')
-    .setDescription('This is a simple API application designed to handle auction functionality.')
+    .setDescription(
+      'This is a simple API application designed to handle auction functionality.',
+    )
     .setVersion('1.0')
     .build();
 

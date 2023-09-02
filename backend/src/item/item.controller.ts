@@ -1,11 +1,25 @@
 import { UserRequest } from 'app.middleware';
 
 import {
-    Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Put, Query, Req
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Post,
+  Put,
+  Query,
+  Req,
 } from '@nestjs/common';
 import {
-    ApiBearerAuth, ApiCreatedResponse, ApiNoContentResponse, ApiNotFoundResponse, ApiOkResponse,
-    ApiTags
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiNoContentResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiTags,
 } from '@nestjs/swagger';
 
 import { ItemCreateDto } from './dto/item-create.dto';
@@ -26,25 +40,18 @@ export class ItemController {
     @Query('page') page: number = 1,
     @Query('limit') limit: number = 10,
   ): Promise<PaginateItems> {
-    return this.itemService.findAllByUser(
-      req.user,
-      page,
-      limit
-    );
+    return this.itemService.findAllByUser(req.user, page, limit);
   }
 
   @Get('auction')
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ description: 'Ok' })
-  async biddingItems(@Req() req: UserRequest,
+  async biddingItems(
+    @Req() req: UserRequest,
     @Query('page') page: number = 1,
-    @Query('limit') limit: number = 10
+    @Query('limit') limit: number = 10,
   ): Promise<PaginateItems> {
-    return this.itemService.findAllPublishedItems(
-      req.user,
-      page,
-      limit
-    );
+    return this.itemService.findAllPublishedItems(req.user, page, limit);
   }
 
   @Post()

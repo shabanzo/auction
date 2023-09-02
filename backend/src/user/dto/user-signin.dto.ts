@@ -6,7 +6,7 @@ import { UserDto } from './user.dto';
 
 export class UserSigninDto extends UserDto {
   @ApiProperty({
-    example: 'Password!1'
+    example: 'Password!1',
   })
   @IsNotEmpty()
   @IsString()

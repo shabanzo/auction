@@ -21,8 +21,9 @@ const item: Item = {
   id: 1,
   name: 'Item 1',
   startingPrice: 10,
+  currentPrice: 10,
   timeWindowHours: 24,
-  publishedAt: new Date,
+  publishedAt: new Date(),
   user: mockUserRequest.user,
   bids: [],
 };
@@ -76,7 +77,10 @@ describe('BidController (Integration)', () => {
 
       const result = await bidController.create(mockUserRequest, bidCreateDto);
 
-      expect(mockBidService.create).toHaveBeenCalledWith(mockUserRequest.user, bidCreateDto);
+      expect(mockBidService.create).toHaveBeenCalledWith(
+        mockUserRequest.user,
+        bidCreateDto,
+      );
       expect(result).toEqual(createdBid);
     });
   });

@@ -49,16 +49,14 @@ import { AppService } from './app.service';
       password: process.env.DB_PASS,
       synchronize: true,
       logging: true,
-      entities: [User, Item, Bid]
+      entities: [User, Item, Bid],
     }),
     UserModule,
     ItemModule,
-    BidModule
+    BidModule,
   ],
   controllers: [AppController],
-  providers: [
-    AppService
-  ],
+  providers: [AppService],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
@@ -68,10 +66,6 @@ export class AppModule {
         { path: 'api/v1/user/signin', method: RequestMethod.POST },
         { path: 'api/v1/user/signup', method: RequestMethod.POST },
       )
-      .forRoutes(
-        UserController,
-        ItemController,
-        BidController
-      );
+      .forRoutes(UserController, ItemController, BidController);
   }
 }

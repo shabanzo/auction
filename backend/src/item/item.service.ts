@@ -24,14 +24,15 @@ export class ItemService {
   async findAllByUser(
     user: User,
     page: number = 1,
-    limit: number = 10
+    limit: number = 10,
   ): Promise<PaginateItems> {
-    const skip = (page - 1) * limit;
-    const items = await this.itemRepository.find({
-      where: { user },
-      skip,
-      take: limit,
-    });
+    const queryBuilder: SelectQueryBuilder<Item> = this.itemRepository
+      .createQueryBuilder('item')
+      .where('item.user = :userId', { userId: user.id })
+      .skip((page - 1) * limit)
+      .take(limit);
+
+    const items = await queryBuilder.getMany();
     const totalItems = await this.countItemsByUser(user);
     const totalPages = Math.ceil(totalItems / limit);
     return {
@@ -52,14 +53,14 @@ export class ItemService {
   async findAllPublishedItems(
     user: User,
     page: number = 1,
-    limit: number = 10
+    limit: number = 10,
   ): Promise<PaginateItems> {
     const queryBuilder: SelectQueryBuilder<Item> = this.itemRepository
       .createQueryBuilder('item')
       .where('item.user <> :userId', { userId: user.id })
       .andWhere('item.publishedAt IS NOT NULL')
       .andWhere(
-        `NOW() < (item.publishedAt + INTERVAL '1 hour' * item.timeWindowHours)`
+        `NOW() < (item.publishedAt + INTERVAL '1 hour' * item.timeWindowHours)`,
       )
       .skip((page - 1) * limit)
       .take(limit);
@@ -82,7 +83,11 @@ export class ItemService {
   }
 
   async create(itemDto: ItemCreateDto): Promise<Item> {
-    const item = this.itemRepository.create(itemDto);
+    const newItem = {
+      ...itemDto,
+      currentPrice: itemDto.startingPrice,
+    };
+    const item = this.itemRepository.create(newItem);
     return this.itemRepository.save(item);
   }
 
@@ -98,7 +103,7 @@ export class ItemService {
   }
 
   async delete(id: number): Promise<void> {
-    const item = await this.itemRepository.findOneBy({id});
+    const item = await this.itemRepository.findOneBy({ id });
     if (!item) {
       throw new NotFoundException(`Item with ID ${id} not found`);
     }

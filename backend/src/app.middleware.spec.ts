@@ -39,10 +39,16 @@ describe('isAuthenticated Middleware', () => {
     const mockUser = { id: 1, email: 'test@example.com' } as User;
 
     mockRequest.headers.authorization = 'Bearer valid-token';
-    (mockJwtService.verify as jest.Mock).mockResolvedValue({ email: mockUser.email });
+    (mockJwtService.verify as jest.Mock).mockResolvedValue({
+      email: mockUser.email,
+    });
     (mockUserService.findByEmail as jest.Mock).mockResolvedValue(mockUser);
 
-    await middleware.use(mockRequest as UserRequest, mockResponse, mockNextFunction);
+    await middleware.use(
+      mockRequest as UserRequest,
+      mockResponse,
+      mockNextFunction,
+    );
 
     expect(mockUserService.findByEmail).toHaveBeenCalledWith(mockUser.email);
     expect(mockNextFunction).toHaveBeenCalled();
@@ -50,26 +56,45 @@ describe('isAuthenticated Middleware', () => {
 
   it('should throw UNAUTHORIZED if the token is valid but user not found', async () => {
     mockRequest.headers.authorization = 'Bearer valid-token';
-    (mockJwtService.verify as jest.Mock).mockResolvedValue({ email: 'nonexistent@example.com' });
-    (mockUserService.findByEmail as jest.Mock).mockResolvedValue(null)
+    (mockJwtService.verify as jest.Mock).mockResolvedValue({
+      email: 'nonexistent@example.com',
+    });
+    (mockUserService.findByEmail as jest.Mock).mockResolvedValue(null);
 
-    await expect(() => middleware.use(mockRequest as UserRequest, mockResponse, mockNextFunction))
-      .rejects.toThrowError(HttpException);
+    await expect(() =>
+      middleware.use(
+        mockRequest as UserRequest,
+        mockResponse,
+        mockNextFunction,
+      ),
+    ).rejects.toThrowError(HttpException);
     expect(mockNextFunction).not.toHaveBeenCalled();
   });
 
   it('should throw NOT_FOUND if no token is found in the request', async () => {
-    await expect(() => middleware.use(mockRequest as UserRequest, mockResponse, mockNextFunction))
-      .rejects.toThrowError(HttpException);
+    await expect(() =>
+      middleware.use(
+        mockRequest as UserRequest,
+        mockResponse,
+        mockNextFunction,
+      ),
+    ).rejects.toThrowError(HttpException);
     expect(mockNextFunction).not.toHaveBeenCalled();
   });
 
   it('should throw UNAUTHORIZED if an invalid token is provided', async () => {
     mockRequest.headers.authorization = 'Bearer invalid-token';
-    (mockJwtService.verify as jest.Mock).mockResolvedValue(new Error('Invalid token'));
+    (mockJwtService.verify as jest.Mock).mockResolvedValue(
+      new Error('Invalid token'),
+    );
 
-    await expect(() => middleware.use(mockRequest as UserRequest, mockResponse, mockNextFunction))
-      .rejects.toThrowError(HttpException);
+    await expect(() =>
+      middleware.use(
+        mockRequest as UserRequest,
+        mockResponse,
+        mockNextFunction,
+      ),
+    ).rejects.toThrowError(HttpException);
     expect(mockNextFunction).not.toHaveBeenCalled();
   });
 });

@@ -4,7 +4,7 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class UserDepositDto {
   @ApiProperty({
-    example: '500.00'
+    example: '500.00',
   })
   @IsNotEmpty()
   @IsNumber()

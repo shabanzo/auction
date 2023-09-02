@@ -45,8 +45,26 @@ describe('ItemController', () => {
   describe('myItems', () => {
     it('should return items belonging to the user', async () => {
       const items: Item[] = [
-        { id: 1, name: 'Item 1', startingPrice: 10, timeWindowHours: 24, publishedAt: new Date, user: mockUserRequest.user, bids: [] },
-        { id: 2, name: 'Item 2', startingPrice: 15, timeWindowHours: 48, publishedAt: new Date, user: mockUserRequest.user, bids: [] },
+        {
+          id: 1,
+          name: 'Item 1',
+          currentPrice: 10,
+          startingPrice: 10,
+          timeWindowHours: 24,
+          publishedAt: new Date(),
+          user: mockUserRequest.user,
+          bids: [],
+        },
+        {
+          id: 2,
+          name: 'Item 2',
+          currentPrice: 10,
+          startingPrice: 15,
+          timeWindowHours: 48,
+          publishedAt: new Date(),
+          user: mockUserRequest.user,
+          bids: [],
+        },
       ];
 
       const paginatedItems: PaginateItems = {
@@ -54,7 +72,7 @@ describe('ItemController', () => {
         page: 1,
         limit: 10,
         items: items,
-      }
+      };
       mockItemService.findAllByUser.mockResolvedValue(paginatedItems);
 
       const result = await itemController.myItems(mockUserRequest);
@@ -85,8 +103,26 @@ describe('ItemController', () => {
 
     it('should return items not belonging to the user', async () => {
       const items: Item[] = [
-        { id: 3, name: 'Item 3', startingPrice: 20, timeWindowHours: 72, publishedAt: new Date, user: fakeUser1, bids: [] },
-        { id: 4, name: 'Item 4', startingPrice: 25, timeWindowHours: 96, publishedAt: new Date, user: fakeUser2, bids: [] },
+        {
+          id: 3,
+          name: 'Item 3',
+          currentPrice: 20,
+          startingPrice: 20,
+          timeWindowHours: 72,
+          publishedAt: new Date(),
+          user: fakeUser1,
+          bids: [],
+        },
+        {
+          id: 4,
+          name: 'Item 4',
+          currentPrice: 25,
+          startingPrice: 25,
+          timeWindowHours: 96,
+          publishedAt: new Date(),
+          user: fakeUser2,
+          bids: [],
+        },
       ];
       mockItemService.findAllPublishedItems.mockResolvedValue(items);
 
@@ -107,9 +143,10 @@ describe('ItemController', () => {
       const createdItem: Item = {
         id: 5,
         name: itemCreateDto.name,
+        currentPrice: 30,
         startingPrice: 30,
         timeWindowHours: 120,
-        publishedAt: new Date,
+        publishedAt: new Date(),
         user: mockUserRequest.user,
         bids: [],
       };
@@ -129,9 +166,10 @@ describe('ItemController', () => {
       const updatedItem: Item = {
         id: itemId,
         name: itemUpdateDto.name,
+        currentPrice: 40,
         startingPrice: 40,
         timeWindowHours: 144,
-        publishedAt: new Date,
+        publishedAt: new Date(),
         user: mockUserRequest.user,
         bids: [],
       };
@@ -139,7 +177,10 @@ describe('ItemController', () => {
 
       const result = await itemController.update(itemId, itemUpdateDto);
 
-      expect(mockItemService.update).toHaveBeenCalledWith(itemId, itemUpdateDto);
+      expect(mockItemService.update).toHaveBeenCalledWith(
+        itemId,
+        itemUpdateDto,
+      );
       expect(result).toEqual(updatedItem);
     });
   });

@@ -14,7 +14,7 @@ import { UserService } from './user.service';
       secret: secret,
       signOptions: { expiresIn: '1h' },
     }),
-    TypeOrmModule.forFeature([User])
+    TypeOrmModule.forFeature([User]),
   ],
   controllers: [UserController],
   providers: [UserService],

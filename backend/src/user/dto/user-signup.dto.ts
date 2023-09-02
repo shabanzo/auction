@@ -11,11 +11,11 @@ const passwordMessage = `Password must contain Minimum 8 and maximum 20 characte
     at least one uppercase letter,
     one lowercase letter,
     one number and
-    one special character`
-export class UserSignupDto extends UserDto{
+    one special character`;
+export class UserSignupDto extends UserDto {
   @ApiProperty({
     example: 'Password!1',
-    description: passwordMessage
+    description: passwordMessage,
   })
   @IsNotEmpty()
   @Matches(passwordRegEx, {

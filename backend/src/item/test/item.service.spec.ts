@@ -51,7 +51,9 @@ describe('ItemService', () => {
         items: user.items,
       };
 
-      jest.spyOn(itemService, 'findAllByUser').mockResolvedValue(mockPaginatedResponse as any);
+      jest
+        .spyOn(itemService, 'findAllByUser')
+        .mockResolvedValue(mockPaginatedResponse as any);
 
       const result = await itemService.findAllByUser(user as any, 1, 10);
 
@@ -70,9 +72,15 @@ describe('ItemService', () => {
         items: [{ name: 'Item 1' }, { name: 'Item 2' }],
       };
 
-      jest.spyOn(itemService, 'findAllPublishedItems').mockResolvedValue(mockPaginatedResponse as any);
+      jest
+        .spyOn(itemService, 'findAllPublishedItems')
+        .mockResolvedValue(mockPaginatedResponse as any);
 
-      const result = await itemService.findAllPublishedItems(user as any, 1, 10);
+      const result = await itemService.findAllPublishedItems(
+        user as any,
+        1,
+        10,
+      );
 
       expect(result).toEqual(mockPaginatedResponse);
     });
@@ -80,7 +88,12 @@ describe('ItemService', () => {
 
   describe('create', () => {
     it('should create and return an item', async () => {
-      const itemDto = { name: 'Item 1', startingPrice: 10, timeWindowHours: 24 };
+      const itemDto = {
+        name: 'Item 1',
+        currentPrice: 10,
+        startingPrice: 10,
+        timeWindowHours: 24,
+      };
       const createdItem = { ...itemDto, id: 1 };
       mockRepository.create.mockReturnValue(itemDto);
       mockRepository.save.mockReturnValue(createdItem);
@@ -94,7 +107,11 @@ describe('ItemService', () => {
   describe('update', () => {
     it('should update and return an item', async () => {
       const id = 1;
-      const itemDto = { name: 'Updated Item', startingPrice: 20, timeWindowHours: 48 };
+      const itemDto = {
+        name: 'Updated Item',
+        startingPrice: 20,
+        timeWindowHours: 48,
+      };
       const updatedItem = { id, ...itemDto };
 
       mockRepository.preload.mockResolvedValue(updatedItem);
@@ -107,10 +124,16 @@ describe('ItemService', () => {
 
     it('should throw NotFoundException if item is not found', async () => {
       const id = 1;
-      const itemDto = { name: 'Updated Item', startingPrice: 20, timeWindowHours: 48 };
+      const itemDto = {
+        name: 'Updated Item',
+        startingPrice: 20,
+        timeWindowHours: 48,
+      };
 
       mockRepository.preload.mockResolvedValue(undefined);
-      await expect(itemService.update(id, itemDto)).rejects.toThrowError(NotFoundException);
+      await expect(itemService.update(id, itemDto)).rejects.toThrowError(
+        NotFoundException,
+      );
     });
   });
 
@@ -127,7 +150,9 @@ describe('ItemService', () => {
     it('should throw NotFoundException if item is not found', async () => {
       const id = 1;
       mockRepository.findOneBy.mockResolvedValue(undefined);
-      await expect(itemService.delete(id)).rejects.toThrowError(NotFoundException);
+      await expect(itemService.delete(id)).rejects.toThrowError(
+        NotFoundException,
+      );
     });
   });
 });
