@@ -1,7 +1,7 @@
 import { UserRequest } from 'app.middleware';
 
 import {
-    Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Put, Req
+    Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Put, Query, Req
 } from '@nestjs/common';
 import {
     ApiBearerAuth, ApiCreatedResponse, ApiNoContentResponse, ApiNotFoundResponse, ApiOkResponse,
@@ -21,15 +21,30 @@ export class ItemController {
   @Get('mine')
   @ApiOkResponse({ description: 'Ok' })
   @HttpCode(HttpStatus.OK)
-  async myItems(@Req() req: UserRequest): Promise<PaginateItems> {
-    return this.itemService.findAllByUser(req.user);
+  async myItems(
+    @Req() req: UserRequest,
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10,
+  ): Promise<PaginateItems> {
+    return this.itemService.findAllByUser(
+      req.user,
+      page,
+      limit
+    );
   }
 
   @Get('auction')
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ description: 'Ok' })
-  async biddingItems(@Req() req: UserRequest): Promise<PaginateItems> {
-    return this.itemService.findAllNotBelongingToUser(req.user);
+  async biddingItems(@Req() req: UserRequest,
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10
+  ): Promise<PaginateItems> {
+    return this.itemService.findAllNotBelongingToUser(
+      req.user,
+      page,
+      limit
+    );
   }
 
   @Post()
