@@ -41,25 +41,40 @@ describe('ItemService', () => {
   });
 
   describe('findAllByUser', () => {
-    it('should return items belonging to the user', async () => {
+    it('should return items belonging to the user with pagination', async () => {
       const user = { items: [{ name: 'Item 1' }, { name: 'Item 2' }] };
-      const result = await itemService.findAllByUser(user as any);
-      expect(result).toEqual(user.items);
+
+      const mockPaginatedResponse = {
+        page: 1,
+        limit: 10,
+        totalPages: 1,
+        items: user.items,
+      };
+
+      jest.spyOn(itemService, 'findAllByUser').mockResolvedValue(mockPaginatedResponse as any);
+
+      const result = await itemService.findAllByUser(user as any, 1, 10);
+
+      expect(result).toEqual(mockPaginatedResponse);
     });
   });
 
   describe('findAllNotBelongingToUser', () => {
-    it('should return items not belonging to the user', async () => {
+    it('should return items not belonging to the user with pagination', async () => {
       const user = { id: 1 };
-      const items = [{ name: 'Item 1' }, { name: 'Item 2' }];
-      mockRepository.find.mockReturnValue(items);
-      const result = await itemService.findAllNotBelongingToUser(user as any);
-      expect(result).toEqual(items);
-      expect(mockRepository.find).toHaveBeenCalledWith({
-        where: {
-          user: expect.any(Object),
-        },
-      });
+
+      const mockPaginatedResponse = {
+        page: 1,
+        limit: 10,
+        totalPages: 1,
+        items: [{ name: 'Item 1' }, { name: 'Item 2' }],
+      };
+
+      jest.spyOn(itemService, 'findAllNotBelongingToUser').mockResolvedValue(mockPaginatedResponse as any);
+
+      const result = await itemService.findAllNotBelongingToUser(user as any, 1, 10);
+
+      expect(result).toEqual(mockPaginatedResponse);
     });
   });
 

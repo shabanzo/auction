@@ -10,8 +10,7 @@ import {
 
 import { ItemCreateDto } from './dto/item-create.dto';
 import { ItemUpdateDto } from './dto/item-update.dto';
-import { Item } from './item.entity';
-import { ItemService } from './item.service';
+import { ItemService, PaginateItems } from './item.service';
 
 @ApiBearerAuth()
 @ApiTags('Items')
@@ -22,14 +21,14 @@ export class ItemController {
   @Get('mine')
   @ApiOkResponse({ description: 'Ok' })
   @HttpCode(HttpStatus.OK)
-  async myItems(@Req() req: UserRequest): Promise<Item[]> {
+  async myItems(@Req() req: UserRequest): Promise<PaginateItems> {
     return this.itemService.findAllByUser(req.user);
   }
 
   @Get('auction')
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ description: 'Ok' })
-  async biddingItems(@Req() req: UserRequest): Promise<Item[]> {
+  async biddingItems(@Req() req: UserRequest): Promise<PaginateItems> {
     return this.itemService.findAllNotBelongingToUser(req.user);
   }
 

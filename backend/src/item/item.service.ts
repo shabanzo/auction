@@ -1,4 +1,4 @@
-import { Not, Repository } from 'typeorm';
+import { Repository, SelectQueryBuilder } from 'typeorm';
 
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -8,6 +8,12 @@ import { ItemCreateDto } from './dto/item-create.dto';
 import { ItemUpdateDto } from './dto/item-update.dto';
 import { Item } from './item.entity';
 
+export interface PaginateItems {
+  page: number;
+  limit: number;
+  totalPages: number;
+  items: Item[];
+}
 @Injectable()
 export class ItemService {
   constructor(
@@ -15,16 +21,60 @@ export class ItemService {
     private readonly itemRepository: Repository<Item>,
   ) {}
 
-  async findAllByUser(user: User): Promise<Item[]> {
-    return await user.items;
+  async findAllByUser(
+    user: User,
+    page: number = 1,
+    limit: number = 10
+  ): Promise<PaginateItems> {
+    const skip = (page - 1) * limit;
+    const items = await this.itemRepository.find({
+      where: { user },
+      skip,
+      take: limit,
+    });
+    const totalItems = await this.countItemsByUser(user);
+    const totalPages = Math.ceil(totalItems / limit);
+    return {
+      page: page,
+      limit: limit,
+      totalPages: totalPages,
+      items,
+    };
   }
 
-  async findAllNotBelongingToUser(user: User): Promise<Item[]> {
-    return await this.itemRepository.find({
-      where: {
-        user: Not(user),
-      },
-    });
+  async countItemsByUser(user: User): Promise<number> {
+    return this.itemRepository
+      .createQueryBuilder('item')
+      .where('item.user = :userId', { userId: user.id })
+      .getCount();
+  }
+
+  async findAllNotBelongingToUser(
+    user: User,
+    page: number = 1,
+    limit: number = 10
+  ): Promise<PaginateItems> {
+    const queryBuilder: SelectQueryBuilder<Item> = this.itemRepository
+      .createQueryBuilder('item')
+      .where('item.user <> :userId', { userId: user.id })
+      .skip((page - 1) * limit)
+      .take(limit);
+    const items = await queryBuilder.getMany();
+    const totalItems = await this.countItemsNotBelongingToUser(user);
+    const totalPages = Math.ceil(totalItems / limit);
+    return {
+      page: page,
+      limit: limit,
+      totalPages: totalPages,
+      items,
+    };
+  }
+
+  async countItemsNotBelongingToUser(user: User): Promise<number> {
+    return this.itemRepository
+      .createQueryBuilder('item')
+      .where('item.user <> :userId', { userId: user.id })
+      .getCount();
   }
 
   async create(itemDto: ItemCreateDto): Promise<Item> {
