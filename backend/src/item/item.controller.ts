@@ -20,7 +20,7 @@ export class ItemController {
   @Get('mine')
   @ApiOkResponse({ description: 'Ok' })
   @HttpCode(HttpStatus.OK)
-  async myItems(
+  async mine(
     @Req() req: UserRequest,
     @Query('page') page: number = 1,
     @Query('limit') limit: number = 10,

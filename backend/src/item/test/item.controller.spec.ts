@@ -42,7 +42,7 @@ describe('ItemController', () => {
     expect(itemController).toBeDefined();
   });
 
-  describe('myItems', () => {
+  describe('mine', () => {
     it('should return items belonging to the user', async () => {
       const items: Item[] = [
         {
@@ -75,7 +75,7 @@ describe('ItemController', () => {
       };
       mockItemService.findAllByUser.mockResolvedValue(paginatedItems);
 
-      const result = await itemController.myItems(mockUserRequest);
+      const result = await itemController.mine(mockUserRequest);
 
       expect(mockItemService.findAllByUser).toHaveBeenCalled;
       expect(result).toEqual(paginatedItems);
