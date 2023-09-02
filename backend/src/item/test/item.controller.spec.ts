@@ -82,7 +82,7 @@ describe('ItemController', () => {
     });
   });
 
-  describe('biddingItems', () => {
+  describe('bidItems', () => {
     const fakeUser1: User = {
       id: 3,
       email: 'test@test.com',
@@ -126,7 +126,7 @@ describe('ItemController', () => {
       ];
       mockItemService.findAllPublishedItems.mockResolvedValue(items);
 
-      const result = await itemController.biddingItems(mockUserRequest);
+      const result = await itemController.bidItems(mockUserRequest);
 
       expect(mockItemService.findAllPublishedItems).toHaveBeenCalled;
       expect(result).toEqual(items);

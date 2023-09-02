@@ -31,7 +31,7 @@ export class ItemController {
   @Get('auction')
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ description: 'Ok' })
-  async biddingItems(
+  async bidItems(
     @Req() req: UserRequest,
     @Query('page') page: number = 1,
     @Query('limit') limit: number = 10,
