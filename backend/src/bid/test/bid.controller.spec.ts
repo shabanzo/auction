@@ -22,7 +22,7 @@ const item: Item = {
   name: 'Item 1',
   startingPrice: 10,
   timeWindowHours: 24,
-  published: true,
+  publishedAt: new Date,
   user: mockUserRequest.user,
   bids: [],
 };

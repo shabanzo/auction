@@ -17,8 +17,8 @@ export class Item {
   @Column({ type: 'int' })
   timeWindowHours: number;
 
-  @Column({ type: 'boolean', default: false })
-  published: boolean;
+  @Column({ type: 'datetime', default: null })
+  publishedAt: Date;
 
   @ManyToOne(() => User, user => user.items)
   user: User;

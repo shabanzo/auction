@@ -1,4 +1,4 @@
-import { IsNumber, IsOptional, IsPositive, IsString } from 'class-validator';
+import { IsDateString, IsNumber, IsOptional, IsPositive, IsString } from 'class-validator';
 
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -19,4 +19,9 @@ export class ItemUpdateDto {
   @IsPositive()
   @IsOptional()
   timeWindowHours?: number;
+
+  @ApiProperty()
+  @IsDateString()
+  @IsOptional()
+  publishedAt?: string;
 }

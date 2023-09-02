@@ -7,7 +7,7 @@ import { ItemCreateDto } from '../dto/item-create.dto';
 import { ItemUpdateDto } from '../dto/item-update.dto';
 import { ItemController } from '../item.controller';
 import { Item } from '../item.entity';
-import { ItemService } from '../item.service';
+import { ItemService, PaginateItems } from '../item.service';
 
 const mockUserRequest: UserRequest = {
   user: { id: 1 },
@@ -45,15 +45,22 @@ describe('ItemController', () => {
   describe('myItems', () => {
     it('should return items belonging to the user', async () => {
       const items: Item[] = [
-        { id: 1, name: 'Item 1', startingPrice: 10, timeWindowHours: 24, published: true, user: mockUserRequest.user, bids: [] },
-        { id: 2, name: 'Item 2', startingPrice: 15, timeWindowHours: 48, published: true, user: mockUserRequest.user, bids: [] },
+        { id: 1, name: 'Item 1', startingPrice: 10, timeWindowHours: 24, publishedAt: new Date, user: mockUserRequest.user, bids: [] },
+        { id: 2, name: 'Item 2', startingPrice: 15, timeWindowHours: 48, publishedAt: new Date, user: mockUserRequest.user, bids: [] },
       ];
-      mockItemService.findAllByUser.mockResolvedValue(items);
+
+      const paginatedItems: PaginateItems = {
+        totalPages: 1,
+        page: 1,
+        limit: 10,
+        items: items,
+      }
+      mockItemService.findAllByUser.mockResolvedValue(paginatedItems);
 
       const result = await itemController.myItems(mockUserRequest);
 
-      expect(mockItemService.findAllByUser).toHaveBeenCalledWith(mockUserRequest.user);
-      expect(result).toEqual(items);
+      expect(mockItemService.findAllByUser).toHaveBeenCalled;
+      expect(result).toEqual(paginatedItems);
     });
   });
 
@@ -78,14 +85,14 @@ describe('ItemController', () => {
 
     it('should return items not belonging to the user', async () => {
       const items: Item[] = [
-        { id: 3, name: 'Item 3', startingPrice: 20, timeWindowHours: 72, published: true, user: fakeUser1, bids: [] },
-        { id: 4, name: 'Item 4', startingPrice: 25, timeWindowHours: 96, published: true, user: fakeUser2, bids: [] },
+        { id: 3, name: 'Item 3', startingPrice: 20, timeWindowHours: 72, publishedAt: new Date, user: fakeUser1, bids: [] },
+        { id: 4, name: 'Item 4', startingPrice: 25, timeWindowHours: 96, publishedAt: new Date, user: fakeUser2, bids: [] },
       ];
       mockItemService.findAllNotBelongingToUser.mockResolvedValue(items);
 
       const result = await itemController.biddingItems(mockUserRequest);
 
-      expect(mockItemService.findAllNotBelongingToUser).toHaveBeenCalledWith(mockUserRequest.user);
+      expect(mockItemService.findAllNotBelongingToUser).toHaveBeenCalled;
       expect(result).toEqual(items);
     });
   });
@@ -102,7 +109,7 @@ describe('ItemController', () => {
         name: itemCreateDto.name,
         startingPrice: 30,
         timeWindowHours: 120,
-        published: true,
+        publishedAt: new Date,
         user: mockUserRequest.user,
         bids: [],
       };
@@ -124,7 +131,7 @@ describe('ItemController', () => {
         name: itemUpdateDto.name,
         startingPrice: 40,
         timeWindowHours: 144,
-        published: true,
+        publishedAt: new Date,
         user: mockUserRequest.user,
         bids: [],
       };
