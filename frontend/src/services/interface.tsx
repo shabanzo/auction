@@ -8,9 +8,10 @@ export interface User {
 export interface Item {
   id: number;
   name: string;
+  currentPrice?: number;
   startingPrice: number;
   timeWindowHours: number;
-  publishedAt: Date;
+  publishedAt?: string;
 }
 
 export interface BidItem {

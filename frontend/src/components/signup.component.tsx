@@ -45,7 +45,7 @@ const Signup = () => {
     setMessage('');
     setSuccessful(false);
 
-    AuthService.register(values.email, values.password).then(
+    AuthService.signup(values).then(
       (response) => {
         setMessage(response.data.message || '');
         setSuccessful(true);

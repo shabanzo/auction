@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
 
-import AuthService from '../services/user.service';
+import UserService from '../services/user.service';
 
 const validationSchema = Yup.object().shape({
   email: Yup.string().required('Email is required'),
@@ -27,7 +27,7 @@ const Signin = () => {
     setLoading(true);
 
     try {
-      const response = await AuthService.signin(values.email, values.password);
+      const response = await UserService.signin(values);
       if (response) {
         navigate('/profile');
         window.location.reload();

@@ -5,13 +5,14 @@ import { User } from './interface';
 
 const API_URL = 'http://localhost:3000/api/v1/user/';
 
+interface authParams {
+  email: string;
+  password: string
+}
 class UserService {
-  signin(email: string, password: string): Promise<AxiosResponse<User>> {
+  signin(authParams: authParams): Promise<AxiosResponse<User>> {
     return axios
-      .post<User>(API_URL + 'signin', {
-        email,
-        password,
-      })
+      .post<User>(API_URL + 'signin', authParams)
       .then((response) => {
         if (response.data.token) {
           localStorage.setItem('user', JSON.stringify(response.data));
@@ -25,11 +26,8 @@ class UserService {
     localStorage.removeItem('user');
   }
 
-  register(email: string, password: string): Promise<AxiosResponse<User>> {
-    return axios.post<User>(API_URL + 'signup', {
-      email,
-      password,
-    });
+  signup(authParams: authParams): Promise<AxiosResponse<User>> {
+    return axios.post<User>(API_URL + 'signup', authParams);
   }
 
   getCurrentUser(): User | null {
