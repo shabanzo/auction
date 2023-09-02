@@ -15,7 +15,7 @@ const mockUserRequest: UserRequest = {
 
 const mockItemService = {
   findAllByUser: jest.fn(),
-  findAllNotBelongingToUser: jest.fn(),
+  findAllPublishedItems: jest.fn(),
   create: jest.fn(),
   update: jest.fn(),
   delete: jest.fn(),
@@ -88,11 +88,11 @@ describe('ItemController', () => {
         { id: 3, name: 'Item 3', startingPrice: 20, timeWindowHours: 72, publishedAt: new Date, user: fakeUser1, bids: [] },
         { id: 4, name: 'Item 4', startingPrice: 25, timeWindowHours: 96, publishedAt: new Date, user: fakeUser2, bids: [] },
       ];
-      mockItemService.findAllNotBelongingToUser.mockResolvedValue(items);
+      mockItemService.findAllPublishedItems.mockResolvedValue(items);
 
       const result = await itemController.biddingItems(mockUserRequest);
 
-      expect(mockItemService.findAllNotBelongingToUser).toHaveBeenCalled;
+      expect(mockItemService.findAllPublishedItems).toHaveBeenCalled;
       expect(result).toEqual(items);
     });
   });

@@ -17,7 +17,7 @@ export class Item {
   @Column({ type: 'int' })
   timeWindowHours: number;
 
-  @Column({ type: 'datetime', default: null })
+  @Column({ type: 'timestamptz', default: null })
   publishedAt: Date;
 
   @ManyToOne(() => User, user => user.items)

@@ -40,7 +40,7 @@ export class ItemController {
     @Query('page') page: number = 1,
     @Query('limit') limit: number = 10
   ): Promise<PaginateItems> {
-    return this.itemService.findAllNotBelongingToUser(
+    return this.itemService.findAllPublishedItems(
       req.user,
       page,
       limit

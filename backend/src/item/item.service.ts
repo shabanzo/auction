@@ -49,7 +49,7 @@ export class ItemService {
       .getCount();
   }
 
-  async findAllNotBelongingToUser(
+  async findAllPublishedItems(
     user: User,
     page: number = 1,
     limit: number = 10
@@ -57,6 +57,7 @@ export class ItemService {
     const queryBuilder: SelectQueryBuilder<Item> = this.itemRepository
       .createQueryBuilder('item')
       .where('item.user <> :userId', { userId: user.id })
+      .andWhere('item.publishedAt IS NOT NULL')
       .skip((page - 1) * limit)
       .take(limit);
     const items = await queryBuilder.getMany();

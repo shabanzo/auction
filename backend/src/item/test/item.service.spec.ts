@@ -59,7 +59,7 @@ describe('ItemService', () => {
     });
   });
 
-  describe('findAllNotBelongingToUser', () => {
+  describe('findAllPublishedItems', () => {
     it('should return items not belonging to the user with pagination', async () => {
       const user = { id: 1 };
 
@@ -70,9 +70,9 @@ describe('ItemService', () => {
         items: [{ name: 'Item 1' }, { name: 'Item 2' }],
       };
 
-      jest.spyOn(itemService, 'findAllNotBelongingToUser').mockResolvedValue(mockPaginatedResponse as any);
+      jest.spyOn(itemService, 'findAllPublishedItems').mockResolvedValue(mockPaginatedResponse as any);
 
-      const result = await itemService.findAllNotBelongingToUser(user as any, 1, 10);
+      const result = await itemService.findAllPublishedItems(user as any, 1, 10);
 
       expect(result).toEqual(mockPaginatedResponse);
     });
