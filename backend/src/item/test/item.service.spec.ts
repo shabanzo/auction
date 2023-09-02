@@ -14,6 +14,7 @@ const mockRepository = {
   preload: jest.fn(),
   findOneBy: jest.fn(),
   remove: jest.fn(),
+  merge: jest.fn(),
 };
 
 describe('ItemService', () => {
@@ -126,10 +127,10 @@ describe('ItemService', () => {
       };
       const updatedItem = { id, ...itemDto };
 
-      mockRepository.preload.mockResolvedValue(updatedItem);
+      mockRepository.findOneBy.mockResolvedValue(updatedItem);
       mockRepository.save.mockResolvedValue(updatedItem);
       const result = await itemService.update(id, itemDto);
-      expect(mockRepository.preload).toHaveBeenCalledWith({ id, ...itemDto });
+      expect(mockRepository.findOneBy).toHaveBeenCalledWith({ id });
       expect(mockRepository.save).toHaveBeenCalledWith(updatedItem);
       expect(result).toEqual(updatedItem);
     });
@@ -142,7 +143,7 @@ describe('ItemService', () => {
         timeWindowHours: 48,
       };
 
-      mockRepository.preload.mockResolvedValue(undefined);
+      mockRepository.findOneBy.mockResolvedValue(undefined);
       await expect(itemService.update(id, itemDto)).rejects.toThrowError(
         NotFoundException,
       );

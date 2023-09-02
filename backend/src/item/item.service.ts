@@ -93,14 +93,13 @@ export class ItemService {
   }
 
   async update(id: number, itemDto: ItemUpdateDto): Promise<Item> {
-    const item = await this.itemRepository.preload({
-      id,
-      ...itemDto,
-    });
+    const item = await this.itemRepository.findOneBy({id});
     if (!item) {
       throw new NotFoundException(`Item with ID ${id} not found`);
     }
-    return this.itemRepository.save(item);
+    this.itemRepository.merge(item, itemDto);
+
+    return await this.itemRepository.save(item);
   }
 
   async delete(id: number): Promise<void> {
