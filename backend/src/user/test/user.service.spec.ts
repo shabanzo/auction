@@ -58,8 +58,7 @@ describe('UserService', () => {
         id: 1,
         email: userDto.email,
         password: hashedPassword,
-        walletBalance: 0,
-        createdDate: new Date(),
+        walletBalance: 0
       };
 
       mockUserRepository.findOneBy.mockResolvedValue(null);
@@ -77,7 +76,6 @@ describe('UserService', () => {
         email: userDto.email,
         password: hashedPassword,
         walletBalance: 0,
-        createdDate: expect.any(Date),
       });
       expect(mockUserRepository.save).toHaveBeenCalledWith(newUser);
       expect(result).toEqual({

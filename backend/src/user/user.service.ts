@@ -30,8 +30,7 @@ export class UserService {
     const reqBody = {
       email: userDto.email,
       password: hash,
-      walletBalance: 0,
-      createdDate: new Date,
+      walletBalance: 0
     };
     const newUser = await this.userRepository.create(reqBody);
     this.userRepository.save(newUser);
@@ -48,6 +47,7 @@ export class UserService {
       const payload = { email: userDto.email };
       return {
         ...payload,
+        walletBalance: user.walletBalance,
         token: this.jwtService.sign(payload),
       };
     }
