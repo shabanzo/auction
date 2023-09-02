@@ -1,39 +1,50 @@
+// ItemsList.tsx
 import React, { useEffect, useState } from 'react';
 import { Button, Col, Container, Row, Table } from 'react-bootstrap';
 import ReactPaginate from 'react-paginate';
 import { useLocation } from 'react-router-dom';
 
-import { Item } from '../services/interface';
-import itemService from '../services/item.service';
+import { Item, ItemLite } from '../services/interface';
+import ItemService from '../services/item.service';
 import { FormatLocalTime } from '../utils/time';
+import { CreateItemModal } from './createItemModal.component';
 
 const ItemsList: React.FC = () => {
   const [items, setItems] = useState<Item[]>([]);
   const [pageCount, setPageCount] = useState<number>(0);
   const [currentPage, setCurrentPage] = useState<number>(0);
+  const [showCreateModal, setShowCreateModal] = useState(false);
 
   const location = useLocation();
   const urlSearchParams = new URLSearchParams(location.search);
   const initialPage: number = parseInt(urlSearchParams.get('page') || '1', 10) - 1;
 
   useEffect(() => {
-    const fetchData = async () => {
-      const paginatedItems = await itemService.getMine(currentPage);
-      setItems(paginatedItems.items);
-      setPageCount(paginatedItems.totalPages);
-    };
-
     fetchData();
   }, [currentPage]);
+
+  const fetchData = async () => {
+    const paginatedItems = await ItemService.getMine(currentPage);
+    setItems(paginatedItems.items);
+    setPageCount(paginatedItems.totalPages);
+  };
 
   const handlePageClick = (selectedPage: { selected: number }) => {
     setCurrentPage(selectedPage.selected);
   };
 
-  const handlePublish = (itemId: number) => {
-    // Implement the publish action for the given item
-    // You can make an API call or perform any necessary logic here
-    alert(`Publish item with ID ${itemId}`);
+  const handlePublish = async (itemId: number) => {
+    await ItemService.publish(itemId);
+
+    fetchData();
+  };
+
+  const handleCreateItem = async (values: ItemLite) => {
+    await ItemService.create(values);
+
+    fetchData();
+
+    setShowCreateModal(false);
   };
 
   return (
@@ -41,10 +52,13 @@ const ItemsList: React.FC = () => {
       <Row>
         <Col>
           <h1 className="mb-4">Items List</h1>
+          <Button className="mb-4" variant="success" onClick={() => setShowCreateModal(true)}>
+            Create Item
+          </Button>
           {items.length === 0 ? (
             <p>No items to display.</p>
           ) : (
-            <>
+              <>
               <Table bordered striped hover>
                 <thead>
                   <tr>
@@ -97,6 +111,11 @@ const ItemsList: React.FC = () => {
           )}
         </Col>
       </Row>
+      <CreateItemModal
+        show={showCreateModal}
+        onHide={() => setShowCreateModal(false)}
+        onSubmit={handleCreateItem}
+      />
     </Container>
   );
 };

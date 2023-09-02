@@ -5,15 +5,16 @@ export interface User {
   message?: string;
 }
 
-export interface Item {
-  id: number;
+export interface ItemLite {
   name: string;
-  currentPrice?: number;
   startingPrice: number;
   timeWindowHours: number;
-  publishedAt?: string;
 }
-
+export interface Item extends ItemLite {
+  id: number;
+  currentPrice: number;
+  publishedAt: string;
+}
 export interface BidItem {
   id: number;
   name: string;
