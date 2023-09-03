@@ -35,6 +35,8 @@ describe('ItemService', () => {
 
     itemService = module.get<ItemService>(ItemService);
     itemRepository = module.get<Repository<Item>>(getRepositoryToken(Item));
+
+    jest.clearAllMocks();
   });
 
   it('should be defined', () => {
@@ -147,6 +149,8 @@ describe('ItemService', () => {
       await expect(itemService.update(id, itemDto)).rejects.toThrowError(
         NotFoundException,
       );
+      expect(mockRepository.merge).not.toHaveBeenCalled();
+      expect(mockRepository.save).not.toHaveBeenCalled();
     });
   });
 });

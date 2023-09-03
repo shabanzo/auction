@@ -40,6 +40,8 @@ describe('UserService', () => {
 
     userService = module.get<UserService>(UserService);
     userRepository = module.get<Repository<User>>(getRepositoryToken(User));
+
+    jest.clearAllMocks();
   });
 
   it('should be defined', () => {
