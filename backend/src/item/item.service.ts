@@ -19,7 +19,11 @@ export class ItemService {
   constructor(
     @InjectRepository(Item)
     private readonly itemRepository: Repository<Item>,
-  ) {}
+  ) { }
+
+  async findOneById(id: number): Promise<Item> {
+    return await this.itemRepository.findOneBy({ id });
+  }
 
   async findAllByUser(
     user: User,
