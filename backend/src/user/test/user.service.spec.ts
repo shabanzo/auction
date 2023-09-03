@@ -19,6 +19,17 @@ const mockJwtService = {
   sign: jest.fn(),
 };
 
+const userDto = {
+  email: 'test@example.com',
+  password: 'password',
+};
+
+const user = {
+  id: 1,
+  email: userDto.email,
+  password: 'hashed-password',
+};
+
 describe('UserService', () => {
   let userService: UserService;
   let userRepository: Repository<User>;
@@ -50,16 +61,10 @@ describe('UserService', () => {
 
   describe('signup', () => {
     it('should create a new user and return user data', async () => {
-      const userDto = {
-        email: 'test@example.com',
-        password: 'password',
-      };
       const salt = 'mocked-salt';
       const hashedPassword = 'hashed-password';
       const newUser = {
-        id: 1,
-        email: userDto.email,
-        password: hashedPassword,
+        ...user,
         walletBalance: 0,
       };
 
@@ -90,11 +95,6 @@ describe('UserService', () => {
     });
 
     it('should throw HttpException if email already exists', async () => {
-      const userDto = {
-        email: 'existing@example.com',
-        password: 'password',
-      };
-
       mockUserRepository.findOneBy.mockResolvedValue({ email: userDto.email });
 
       await expect(userService.signup(userDto)).rejects.toThrowError(
@@ -105,15 +105,6 @@ describe('UserService', () => {
 
   describe('signin', () => {
     it('should sign in and return a user token', async () => {
-      const userDto = {
-        email: 'test@example.com',
-        password: 'password',
-      };
-      const user = {
-        id: 1,
-        email: userDto.email,
-        password: 'hashed-password',
-      };
       const token = 'mocked-token';
 
       mockUserRepository.findOneBy.mockResolvedValue(user);
@@ -139,16 +130,6 @@ describe('UserService', () => {
     });
 
     it('should throw HttpException if credentials are incorrect', async () => {
-      const userDto = {
-        email: 'test@example.com',
-        password: 'incorrect-password',
-      };
-      const user = {
-        id: 1,
-        email: userDto.email,
-        password: 'hashed-password',
-      };
-
       mockUserRepository.findOneBy.mockResolvedValue(user);
       jest.spyOn(bcrypt, 'compare').mockResolvedValue(false);
 
@@ -160,20 +141,19 @@ describe('UserService', () => {
 
   describe('findByEmail', () => {
     it('should find and return a user by email', async () => {
-      const email = 'test@example.com';
-      const user = {
-        id: 1,
-        email,
-        password: 'hashed-password',
+      const foundedUser = {
+        ...user,
         walletBalance: 100,
       };
 
-      mockUserRepository.findOneBy.mockResolvedValue(user);
+      mockUserRepository.findOneBy.mockResolvedValue(foundedUser);
 
-      const result = await userService.findByEmail(email);
+      const result = await userService.findByEmail(user.email);
 
-      expect(mockUserRepository.findOneBy).toHaveBeenCalledWith({ email });
-      expect(result).toEqual(user);
+      expect(mockUserRepository.findOneBy).toHaveBeenCalledWith({
+        email: user.email,
+      });
+      expect(result).toEqual(foundedUser);
     });
 
     it('should return null if user is not found by email', async () => {
@@ -190,10 +170,8 @@ describe('UserService', () => {
 
   describe('deposit', () => {
     it('should deposit an amount to user wallet', async () => {
-      const user = {
-        id: 1,
-        email: 'test@example.com',
-        password: 'hashed-password',
+      const userReq = {
+        ...user,
         walletBalance: 100,
         items: [],
         bids: [],
@@ -203,13 +181,13 @@ describe('UserService', () => {
       };
 
       const updatedUser = {
-        ...user,
-        walletBalance: user.walletBalance + depositDto.amount,
+        ...userReq,
+        walletBalance: userReq.walletBalance + depositDto.amount,
       };
 
       mockUserRepository.save.mockResolvedValue(updatedUser);
 
-      const result = await userService.deposit(user, depositDto);
+      const result = await userService.deposit(userReq, depositDto);
 
       expect(mockUserRepository.save).toHaveBeenCalledWith(updatedUser);
       expect(result).toEqual({

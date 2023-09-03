@@ -31,6 +31,13 @@ const mockCacheService = {
   set: jest.fn(),
 };
 
+const user: User = { id: 1 } as User;
+const item: Item = { id: 2, currentPrice: 40, bids: [] } as Item;
+
+const bidDto: BidCreateDto = { itemId: 2, amount: 50 };
+const newBid = { ...bidDto, item, user };
+const createdBid: Bid = { ...bidDto, id: 1, user, item };
+
 describe('BidService', () => {
   let bidService: BidService;
   let bidRepository: Repository<Bid>;
@@ -70,12 +77,6 @@ describe('BidService', () => {
 
   describe('create', () => {
     it('should create and return a bid', async () => {
-      const user: User = { id: 1 } as User;
-      const item: Item = { id: 2, currentPrice: 40, bids: [] } as Item;
-      const bidDto: BidCreateDto = { itemId: 2, amount: 50 };
-      const newBid = { ...bidDto, item, user };
-      const createdBid: Bid = { ...bidDto, id: 1, user, item };
-
       mockItemRepository.findOneBy.mockResolvedValue(item);
       mockCacheService.get.mockResolvedValue(undefined);
       mockBidRepository.create.mockReturnValue(newBid);
@@ -103,9 +104,6 @@ describe('BidService', () => {
     });
 
     it('should throw NotFoundException if item is not found', async () => {
-      const user: User = { id: 1 } as User;
-      const bidDto: BidCreateDto = { itemId: 2, amount: 50 };
-
       mockItemRepository.findOneBy.mockResolvedValue(undefined);
 
       await expect(bidService.create(user, bidDto)).rejects.toThrowError(
@@ -126,21 +124,20 @@ describe('BidService', () => {
     });
 
     it('should throw UnprocessableEntityException if bid amount is lower than current price', async () => {
-      const user: User = { id: 1 } as User;
-      const item: Item = { id: 2, currentPrice: 50 } as Item;
-      const bidDto: BidCreateDto = { itemId: 2, amount: 40 };
+      const newItem: Item = { id: 2, currentPrice: 50 } as Item;
+      const newBidDto: BidCreateDto = { itemId: 2, amount: 40 };
 
-      mockItemRepository.findOneBy.mockResolvedValue(item);
+      mockItemRepository.findOneBy.mockResolvedValue(newItem);
 
-      await expect(bidService.create(user, bidDto)).rejects.toThrowError(
+      await expect(bidService.create(user, newBidDto)).rejects.toThrowError(
         UnprocessableEntityException,
       );
 
       expect(mockItemRepository.findOneBy).toHaveBeenCalledWith({
-        id: bidDto.itemId,
+        id: newBidDto.itemId,
       });
       expect(mockCacheService.get).toHaveBeenCalledWith(
-        `u${user.id}i${bidDto.itemId}`,
+        `u${user.id}i${newBidDto.itemId}`,
       );
       expect(mockBidRepository.create).not.toHaveBeenCalled();
       expect(mockBidRepository.save).not.toHaveBeenCalled();
@@ -149,10 +146,6 @@ describe('BidService', () => {
     });
 
     it('should throw UnprocessableEntityException if bid is placed within 5 seconds', async () => {
-      const user: User = { id: 1 } as User;
-      const item: Item = { id: 2, currentPrice: 40, bids: [] } as Item;
-      const bidDto: BidCreateDto = { itemId: 2, amount: 50 };
-
       mockItemRepository.findOneBy.mockResolvedValue(item);
       mockCacheService.get.mockResolvedValue(true);
 
