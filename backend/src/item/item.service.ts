@@ -59,13 +59,21 @@ export class ItemService {
     user: User,
     page: number = 1,
     limit: number = 10,
+    completed: boolean = false,
   ): Promise<PaginateItems> {
+    let completedOperation: string;
+
+    if (completed) {
+      completedOperation = '>';
+    } else {
+      completedOperation = '<=';
+    }
     const queryBuilder: SelectQueryBuilder<Item> = this.itemRepository
       .createQueryBuilder('item')
       .where('item.user <> :userId', { userId: user.id })
       .andWhere('item.publishedAt IS NOT NULL')
       .andWhere(
-        `NOW() < (item.publishedAt + INTERVAL '1 hour' * item.timeWindowHours)`,
+        `NOW() ${completedOperation} (item.publishedAt + INTERVAL '1 hour' * item.timeWindowHours)`,
       )
       .orderBy('item.id', 'ASC')
       .skip((page - 1) * limit)

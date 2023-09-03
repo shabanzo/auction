@@ -7,6 +7,7 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  ParseBoolPipe,
   Post,
   Put,
   Query,
@@ -48,8 +49,14 @@ export class ItemController {
     @Req() req: UserRequest,
     @Query('page') page: number = 1,
     @Query('limit') limit: number = 10,
+    @Query('completed', new ParseBoolPipe()) completed: boolean = false,
   ): Promise<PaginateItems> {
-    return this.itemService.findAllPublishedItems(req.user, page, limit);
+    return this.itemService.findAllPublishedItems(
+      req.user,
+      page,
+      limit,
+      completed,
+    );
   }
 
   @Post()
