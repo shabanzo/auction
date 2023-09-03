@@ -21,6 +21,7 @@ const BidItemsList: React.FC = () => {
   const [pageCount, setPageCount] = useState<number>(0);
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
+  const [completed, setCompleted] = useState<boolean>(true);
 
   const location = useLocation();
   const urlSearchParams = new URLSearchParams(location.search);
@@ -29,7 +30,7 @@ const BidItemsList: React.FC = () => {
 
   const fetchData = async () => {
     try {
-      const response = await itemService.getBidItems(currentPage);
+      const response = await itemService.getBidItems(currentPage, completed);
       setItems(response.data.items);
       setPageCount(response.data.totalPages);
     } catch (error: AxiosError | any) {
@@ -52,7 +53,7 @@ const BidItemsList: React.FC = () => {
 
   useEffect(() => {
     fetchData();
-  }, [currentPage]);
+  }, [currentPage, completed]);
 
   const handlePageClick = (selectedPage: { selected: number }) => {
     setCurrentPage(selectedPage.selected);
@@ -91,6 +92,20 @@ const BidItemsList: React.FC = () => {
       <Row>
         <Col>
           <h1 className="mb-4">Bid Items List</h1>
+          <Button
+            className="mb-4"
+            variant="success"
+            onClick={() => setCompleted(false)}
+          >
+            Ongoing
+          </Button>
+          <Button
+            className="mb-4"
+            variant="success"
+            onClick={() => setCompleted(true)}
+          >
+            Completed
+          </Button>
           <Table bordered striped hover>
             <thead>
               <tr>

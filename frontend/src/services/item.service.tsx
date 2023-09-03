@@ -13,9 +13,15 @@ class ItemService {
     });
   }
 
-  getBidItems(currentPage: number): Promise<AxiosResponse<PaginatedItems>> {
+  getBidItems(
+    currentPage: number,
+    completed: boolean,
+  ): Promise<AxiosResponse<PaginatedItems>> {
     const headers = authHeader();
-    return axios.get(`${API_URL}auction?page=${currentPage + 1}`, { headers });
+    return axios.get(
+      `${API_URL}auction?page=${currentPage + 1}&completed=${completed}`,
+      { headers },
+    );
   }
 
   create(item: ItemLite): Promise<AxiosResponse<Item>> {
