@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
 
 import { useError } from '../contexts/error.context';
+import { useSuccess } from '../contexts/success.context';
 import AuthService from '../services/user.service';
 
 const lowercaseMessage = 'Password must contain at least one lowercase letter';
@@ -20,6 +21,7 @@ interface SignupFormValues {
 const Signup = () => {
   const navigate = useNavigate();
   const { addError } = useError();
+  const { addSuccess } = useSuccess();
 
   const initialValues = {
     username: '',
@@ -51,6 +53,7 @@ const Signup = () => {
         setMessage(response.data.message || '');
         setSuccessful(true);
         navigate('/signin');
+        addSuccess('Your account has already created, you can signin now');
       },
       (error) => {
         const resMessage =
