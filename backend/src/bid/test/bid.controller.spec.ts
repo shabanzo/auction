@@ -1,48 +1,69 @@
 import { UserRequest } from 'app.middleware';
-import { Item } from 'item/item.entity';
+import { Repository } from 'typeorm';
+import { User } from 'user/user.entity';
 
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Test, TestingModule } from '@nestjs/testing';
+import { getRepositoryToken } from '@nestjs/typeorm';
 
+import { Item } from '../../item/item.entity';
 import { BidController } from '../bid.controller';
 import { Bid } from '../bid.entity';
 import { BidService } from '../bid.service';
 import { BidCreateDto } from '../dto/bid-create.dto';
 
 const mockUserRequest: UserRequest = {
-  user: { id: 1 }, // Mock user object
+  user: { id: 1 },
 } as UserRequest;
 
-const mockBidService = {
-  findAllByItem: jest.fn(),
+const mockBidRepository = {
   create: jest.fn(),
+  save: jest.fn(),
+  createQueryBuilder: jest.fn(),
 };
 
-const item: Item = {
-  id: 1,
-  name: 'Item 1',
-  startingPrice: 10,
-  currentPrice: 10,
-  timeWindowHours: 24,
-  publishedAt: new Date(),
-  user: mockUserRequest.user,
-  bids: [],
+const mockItemRepository = {
+  findOneBy: jest.fn(),
+  update: jest.fn(),
+};
+
+const mockCacheService = {
+  get: jest.fn(),
+  set: jest.fn(),
 };
 
 describe('BidController (Integration)', () => {
   let bidController: BidController;
+  let bidRepository: Repository<Bid>;
+  let itemRepository: Repository<Item>;
+  let cacheService: Cache;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [BidController],
       providers: [
+        BidService,
         {
-          provide: BidService,
-          useValue: mockBidService,
+          provide: getRepositoryToken(Bid),
+          useValue: mockBidRepository,
+        },
+        {
+          provide: getRepositoryToken(Item),
+          useValue: mockItemRepository,
+        },
+        {
+          provide: CACHE_MANAGER,
+          useValue: mockCacheService,
         },
       ],
     }).compile();
 
     bidController = module.get<BidController>(BidController);
+    bidRepository = module.get<Repository<Bid>>(getRepositoryToken(Bid));
+    itemRepository = module.get<Repository<Item>>(getRepositoryToken(Item));
+    cacheService = module.get<Cache>(CACHE_MANAGER);
+
+    jest.clearAllMocks();
   });
 
   it('should be defined', () => {
@@ -50,22 +71,27 @@ describe('BidController (Integration)', () => {
   });
 
   describe('create', () => {
+    const user: User = { id: 1 } as User;
+    const item: Item = { id: 2, currentPrice: 40, bids: [] } as Item;
+    const bidDto: BidCreateDto = { itemId: 2, amount: 50 };
+    const newBid = { ...bidDto, item, user }
+    const createdBid: Bid = { ...bidDto, id: 1, user, item };
+
     it('should create a new bid', async () => {
-      const bidCreateDto: BidCreateDto = { itemId: 123, amount: 75 };
-      const createdBid: Bid = {
-        id: 3,
-        item: item,
-        amount: bidCreateDto.amount,
-        user: mockUserRequest.user,
-      };
-      mockBidService.create.mockResolvedValue(createdBid);
 
-      const result = await bidController.create(mockUserRequest, bidCreateDto);
+      mockItemRepository.findOneBy.mockResolvedValue(item);
+      mockCacheService.get.mockResolvedValue(undefined);
+      mockBidRepository.create.mockReturnValue(newBid);
+      mockBidRepository.save.mockResolvedValue(createdBid);
 
-      expect(mockBidService.create).toHaveBeenCalledWith(
-        mockUserRequest.user,
-        bidCreateDto,
-      );
+      const result = await bidController.create(mockUserRequest, bidDto);
+
+      expect(mockCacheService.get).toHaveBeenCalledWith(`u${user.id}i${bidDto.itemId}`);
+      expect(mockItemRepository.findOneBy).toHaveBeenCalledWith({ id: bidDto.itemId });
+      expect(mockBidRepository.create).toHaveBeenCalledWith(newBid);
+      expect(mockBidRepository.save).toHaveBeenCalledWith(newBid);
+      expect(mockCacheService.set).toHaveBeenCalledWith(`u${user.id}i${bidDto.itemId}`, true, 5);
+      expect(mockItemRepository.update).toHaveBeenCalledWith(item, { currentPrice: bidDto.amount });
       expect(result).toEqual(createdBid);
     });
   });
