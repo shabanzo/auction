@@ -1,8 +1,19 @@
 import { UserRequest } from 'app.middleware';
 
-import { Body, Controller, HttpCode, HttpStatus, Post, Req } from '@nestjs/common';
 import {
-    ApiBearerAuth, ApiCreatedResponse, ApiNotFoundResponse, ApiTags, ApiUnauthorizedResponse
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Req,
+} from '@nestjs/common';
+import {
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiNotFoundResponse,
+  ApiTags,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 
 import { BidService } from './bid.service';

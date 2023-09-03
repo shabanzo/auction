@@ -19,7 +19,7 @@ export class ItemService {
   constructor(
     @InjectRepository(Item)
     private readonly itemRepository: Repository<Item>,
-  ) { }
+  ) {}
 
   async findOneById(id: number): Promise<Item> {
     return await this.itemRepository.findOneBy({ id });
@@ -90,14 +90,14 @@ export class ItemService {
     const newItem = {
       ...itemDto,
       currentPrice: itemDto.startingPrice,
-      user
+      user,
     };
     const item = this.itemRepository.create(newItem);
     return this.itemRepository.save(item);
   }
 
   async update(id: number, itemDto: ItemUpdateDto): Promise<Item> {
-    const item = await this.itemRepository.findOneBy({id});
+    const item = await this.itemRepository.findOneBy({ id });
     if (!item) {
       throw new NotFoundException(`Item with ID ${id} not found`);
     }

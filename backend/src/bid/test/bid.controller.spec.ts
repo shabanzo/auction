@@ -74,11 +74,10 @@ describe('BidController (Integration)', () => {
     const user: User = { id: 1 } as User;
     const item: Item = { id: 2, currentPrice: 40, bids: [] } as Item;
     const bidDto: BidCreateDto = { itemId: 2, amount: 50 };
-    const newBid = { ...bidDto, item, user }
+    const newBid = { ...bidDto, item, user };
     const createdBid: Bid = { ...bidDto, id: 1, user, item };
 
     it('should create a new bid', async () => {
-
       mockItemRepository.findOneBy.mockResolvedValue(item);
       mockCacheService.get.mockResolvedValue(undefined);
       mockBidRepository.create.mockReturnValue(newBid);
@@ -86,12 +85,22 @@ describe('BidController (Integration)', () => {
 
       const result = await bidController.create(mockUserRequest, bidDto);
 
-      expect(mockCacheService.get).toHaveBeenCalledWith(`u${user.id}i${bidDto.itemId}`);
-      expect(mockItemRepository.findOneBy).toHaveBeenCalledWith({ id: bidDto.itemId });
+      expect(mockCacheService.get).toHaveBeenCalledWith(
+        `u${user.id}i${bidDto.itemId}`,
+      );
+      expect(mockItemRepository.findOneBy).toHaveBeenCalledWith({
+        id: bidDto.itemId,
+      });
       expect(mockBidRepository.create).toHaveBeenCalledWith(newBid);
       expect(mockBidRepository.save).toHaveBeenCalledWith(newBid);
-      expect(mockCacheService.set).toHaveBeenCalledWith(`u${user.id}i${bidDto.itemId}`, true, 5);
-      expect(mockItemRepository.update).toHaveBeenCalledWith(item, { currentPrice: bidDto.amount });
+      expect(mockCacheService.set).toHaveBeenCalledWith(
+        `u${user.id}i${bidDto.itemId}`,
+        true,
+        5,
+      );
+      expect(mockItemRepository.update).toHaveBeenCalledWith(item, {
+        currentPrice: bidDto.amount,
+      });
       expect(result).toEqual(createdBid);
     });
   });

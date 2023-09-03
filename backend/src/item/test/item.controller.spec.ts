@@ -153,9 +153,15 @@ describe('ItemController', () => {
 
       mockItemService.create.mockResolvedValue(createdItem);
 
-      const result = await itemController.create(mockUserRequest, itemCreateDto);
+      const result = await itemController.create(
+        mockUserRequest,
+        itemCreateDto,
+      );
 
-      expect(mockItemService.create).toHaveBeenCalledWith(mockUserRequest.user, itemCreateDto);
+      expect(mockItemService.create).toHaveBeenCalledWith(
+        mockUserRequest.user,
+        itemCreateDto,
+      );
       expect(result).toEqual(createdItem);
     });
   });

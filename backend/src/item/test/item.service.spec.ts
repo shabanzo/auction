@@ -91,13 +91,13 @@ describe('ItemService', () => {
 
   describe('create', () => {
     const user = {
-        id: 1,
-        email: 'test@example.com',
-        password: 'hashed-password',
-        walletBalance: 100,
-        items: [],
-        bids: [],
-      };
+      id: 1,
+      email: 'test@example.com',
+      password: 'hashed-password',
+      walletBalance: 100,
+      items: [],
+      bids: [],
+    };
     it('should create and return an item', async () => {
       const itemDto = {
         name: 'Item 1',

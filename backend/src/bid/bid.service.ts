@@ -5,7 +5,10 @@ import { User } from 'user/user.entity';
 
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import {
-    Inject, Injectable, NotFoundException, UnprocessableEntityException
+  Inject,
+  Injectable,
+  NotFoundException,
+  UnprocessableEntityException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -27,26 +30,30 @@ export class BidService {
     const cache = await this.cacheService.get(cacheKey);
 
     if (cache) {
-      throw new UnprocessableEntityException('You can place a bid once every 5 seconds.');
+      throw new UnprocessableEntityException(
+        'You can place a bid once every 5 seconds.',
+      );
     }
 
-    const item = await this.itemRepository.findOneBy({ id: bidDto.itemId })
+    const item = await this.itemRepository.findOneBy({ id: bidDto.itemId });
 
     if (!item) {
       throw new NotFoundException(`Item with ID ${bidDto.itemId} not found`);
-    } else if (item.currentPrice >= bidDto.amount ) {
-      throw new UnprocessableEntityException('Your bid lower than the current price.');
+    } else if (item.currentPrice >= bidDto.amount) {
+      throw new UnprocessableEntityException(
+        'Your bid lower than the current price.',
+      );
     }
 
     const newBid = {
       ...bidDto,
       item: item,
       user: user,
-    }
+    };
     const bid = this.bidRepository.create(newBid);
     const createdBid = this.bidRepository.save(bid);
     await this.cacheService.set(cacheKey, true, 5);
-    await this.itemRepository.update(item, { currentPrice: bidDto.amount })
+    await this.itemRepository.update(item, { currentPrice: bidDto.amount });
     return createdBid;
   }
 }

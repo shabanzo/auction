@@ -3,7 +3,10 @@ import { Cache } from 'cache-manager';
 import { Repository } from 'typeorm';
 
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { NotFoundException, UnprocessableEntityException } from '@nestjs/common';
+import {
+  NotFoundException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
@@ -70,7 +73,7 @@ describe('BidService', () => {
       const user: User = { id: 1 } as User;
       const item: Item = { id: 2, currentPrice: 40, bids: [] } as Item;
       const bidDto: BidCreateDto = { itemId: 2, amount: 50 };
-      const newBid = { ...bidDto, item, user }
+      const newBid = { ...bidDto, item, user };
       const createdBid: Bid = { ...bidDto, id: 1, user, item };
 
       mockItemRepository.findOneBy.mockResolvedValue(item);
@@ -80,12 +83,22 @@ describe('BidService', () => {
 
       const result = await bidService.create(user, bidDto);
 
-      expect(mockCacheService.get).toHaveBeenCalledWith(`u${user.id}i${bidDto.itemId}`);
-      expect(mockItemRepository.findOneBy).toHaveBeenCalledWith({ id: bidDto.itemId });
+      expect(mockCacheService.get).toHaveBeenCalledWith(
+        `u${user.id}i${bidDto.itemId}`,
+      );
+      expect(mockItemRepository.findOneBy).toHaveBeenCalledWith({
+        id: bidDto.itemId,
+      });
       expect(mockBidRepository.create).toHaveBeenCalledWith(newBid);
       expect(mockBidRepository.save).toHaveBeenCalledWith(newBid);
-      expect(mockCacheService.set).toHaveBeenCalledWith(`u${user.id}i${bidDto.itemId}`, true, 5);
-      expect(mockItemRepository.update).toHaveBeenCalledWith(item, { currentPrice: bidDto.amount });
+      expect(mockCacheService.set).toHaveBeenCalledWith(
+        `u${user.id}i${bidDto.itemId}`,
+        true,
+        5,
+      );
+      expect(mockItemRepository.update).toHaveBeenCalledWith(item, {
+        currentPrice: bidDto.amount,
+      });
       expect(result).toEqual(createdBid);
     });
 
@@ -99,8 +112,12 @@ describe('BidService', () => {
         NotFoundException,
       );
 
-      expect(mockItemRepository.findOneBy).toHaveBeenCalledWith({ id: bidDto.itemId });
-      expect(mockCacheService.get).toHaveBeenCalledWith(`u${user.id}i${bidDto.itemId}`);
+      expect(mockItemRepository.findOneBy).toHaveBeenCalledWith({
+        id: bidDto.itemId,
+      });
+      expect(mockCacheService.get).toHaveBeenCalledWith(
+        `u${user.id}i${bidDto.itemId}`,
+      );
 
       expect(mockBidRepository.create).not.toHaveBeenCalled();
       expect(mockBidRepository.save).not.toHaveBeenCalled();
@@ -119,8 +136,12 @@ describe('BidService', () => {
         UnprocessableEntityException,
       );
 
-      expect(mockItemRepository.findOneBy).toHaveBeenCalledWith({ id: bidDto.itemId });
-      expect(mockCacheService.get).toHaveBeenCalledWith(`u${user.id}i${bidDto.itemId}`);
+      expect(mockItemRepository.findOneBy).toHaveBeenCalledWith({
+        id: bidDto.itemId,
+      });
+      expect(mockCacheService.get).toHaveBeenCalledWith(
+        `u${user.id}i${bidDto.itemId}`,
+      );
       expect(mockBidRepository.create).not.toHaveBeenCalled();
       expect(mockBidRepository.save).not.toHaveBeenCalled();
       expect(mockCacheService.set).not.toHaveBeenCalled();
@@ -141,7 +162,9 @@ describe('BidService', () => {
         UnprocessableEntityException,
       );
 
-      expect(mockCacheService.get).toHaveBeenCalledWith(`u${user.id}i${bidDto.itemId}`);
+      expect(mockCacheService.get).toHaveBeenCalledWith(
+        `u${user.id}i${bidDto.itemId}`,
+      );
       expect(mockCacheService.set).not.toHaveBeenCalled();
       expect(mockItemRepository.findOneBy).not.toHaveBeenCalled();
       expect(mockBidRepository.create).not.toHaveBeenCalled();
