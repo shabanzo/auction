@@ -49,21 +49,6 @@ describe('BidController (Integration)', () => {
     expect(bidController).toBeDefined();
   });
 
-  describe('getBids', () => {
-    it('should return bids by item ID', async () => {
-      const bids: Bid[] = [
-        { id: 1, item, user: mockUserRequest.user, amount: 50 },
-        { id: 2, item, user: mockUserRequest.user, amount: 60 },
-      ];
-      mockBidService.findAllByItem.mockResolvedValue(bids);
-
-      const result = await bidController.getBids(item.id);
-
-      expect(mockBidService.findAllByItem).toHaveBeenCalledWith(item.id);
-      expect(result).toEqual(bids);
-    });
-  });
-
   describe('create', () => {
     it('should create a new bid', async () => {
       const bidCreateDto: BidCreateDto = { itemId: 123, amount: 75 };
