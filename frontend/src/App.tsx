@@ -32,6 +32,10 @@ function App() {
       <SuccessMessage />
       <Routes>
         <Route
+          path="/"
+          element={isLoggedIn ? <Navigate to="/bidItems" /> : <Signin />}
+        />
+        <Route
           path="/signup"
           element={isLoggedIn ? <Navigate to="/profile" /> : <Signup />}
         />

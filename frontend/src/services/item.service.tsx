@@ -3,7 +3,7 @@ import axios, { AxiosResponse } from 'axios';
 import authHeader from './auth.header';
 import { Item, ItemLite, PaginatedItems } from './interface';
 
-const API_URL = 'http://localhost:3000/api/v1/items/';
+const API_URL = 'http://localhost:4000/api/v1/items/';
 
 class ItemService {
   getMine(currentPage: number): Promise<AxiosResponse<PaginatedItems>> {
