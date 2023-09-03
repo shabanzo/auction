@@ -7,19 +7,17 @@ const API_URL = 'http://localhost:3000/api/v1/user/';
 
 interface authParams {
   email: string;
-  password: string
+  password: string;
 }
 class UserService {
   signin(authParams: authParams): Promise<AxiosResponse<User>> {
-    return axios
-      .post<User>(API_URL + 'signin', authParams)
-      .then((response) => {
-        if (response.data.token) {
-          localStorage.setItem('user', JSON.stringify(response.data));
-        }
+    return axios.post<User>(API_URL + 'signin', authParams).then((response) => {
+      if (response.data.token) {
+        localStorage.setItem('user', JSON.stringify(response.data));
+      }
 
-        return response;
-      });
+      return response;
+    });
   }
 
   signout(): void {
@@ -57,7 +55,6 @@ class UserService {
         return Promise.reject(error);
       });
   }
-
 }
 
 export default new UserService();

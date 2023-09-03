@@ -3,12 +3,14 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
 
+import { useError } from '../contexts/error.context';
 import AuthService from '../services/user.service';
 
 const lowercaseMessage = 'Password must contain at least one lowercase letter';
 const uppercaseMessage = 'Password must contain at least one uppercase letter';
 const numberMessage = 'Password must contain at least one number';
-const specialCharMessage = 'Password must contain at least one special character';
+const specialCharMessage =
+  'Password must contain at least one special character';
 
 interface SignupFormValues {
   email: string;
@@ -17,6 +19,7 @@ interface SignupFormValues {
 
 const Signup = () => {
   const navigate = useNavigate();
+  const { addError } = useError();
 
   const initialValues = {
     username: '',
@@ -39,9 +42,7 @@ const Signup = () => {
   const [message, setMessage] = useState<string>('');
   const [successful, setSuccessful] = useState<boolean>(false);
 
-  const handleSignup = async (
-    values: SignupFormValues
-  ) => {
+  const handleSignup = async (values: SignupFormValues) => {
     setMessage('');
     setSuccessful(false);
 
@@ -59,9 +60,9 @@ const Signup = () => {
           error.message ||
           error.toString();
 
-        setMessage(resMessage);
+        addError(resMessage);
         setSuccessful(false);
-      }
+      },
     );
   };
 

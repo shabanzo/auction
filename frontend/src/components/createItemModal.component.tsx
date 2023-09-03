@@ -11,7 +11,11 @@ interface CreateItemModalProps {
   onSubmit: (values: ItemLite) => void;
 }
 
-export const CreateItemModal: React.FC<CreateItemModalProps> = ({ show, onHide, onSubmit }) => {
+export const CreateItemModal: React.FC<CreateItemModalProps> = ({
+  show,
+  onHide,
+  onSubmit,
+}) => {
   return (
     <Modal show={show} onHide={onHide}>
       <Modal.Header closeButton>
@@ -39,7 +43,7 @@ export const CreateItemModal: React.FC<CreateItemModalProps> = ({ show, onHide, 
         >
           {({ errors, touched }) => (
             <FormikForm>
-              <Form.Group className='mb-2' controlId="name">
+              <Form.Group className="mb-2" controlId="name">
                 <Form.Label>Name</Form.Label>
                 <Field
                   type="text"
@@ -52,7 +56,7 @@ export const CreateItemModal: React.FC<CreateItemModalProps> = ({ show, onHide, 
                 </Form.Control.Feedback>
               </Form.Group>
 
-              <Form.Group className='mb-4' controlId="startingPrice">
+              <Form.Group className="mb-4" controlId="startingPrice">
                 <Form.Label>Starting Price</Form.Label>
                 <Field
                   type="number"
@@ -65,7 +69,7 @@ export const CreateItemModal: React.FC<CreateItemModalProps> = ({ show, onHide, 
                 </Form.Control.Feedback>
               </Form.Group>
 
-              <Form.Group className='mb-4' controlId="timeWindowHours">
+              <Form.Group className="mb-4" controlId="timeWindowHours">
                 <Form.Label>Time Window (Hours)</Form.Label>
                 <Field
                   type="number"

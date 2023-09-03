@@ -5,10 +5,12 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 
 import AppNavBar from './components/appNavBar.component';
 import BidItemsList from './components/bidItemsList.component';
+import ErrorMessage from './components/errorMessage.component';
 import ItemsList from './components/itemsList.component';
 import Profile from './components/profile.component';
 import Signin from './components/signin.component';
 import Signup from './components/signup.component';
+import SuccessMessage from './components/successMessage.component';
 import UserService from './services/user.service';
 
 function App() {
@@ -17,8 +19,8 @@ function App() {
 
   useEffect(() => {
     const currentUser = UserService.getCurrentUser();
-    setIsLoggedIn(currentUser !== null);
     if (currentUser) {
+      setIsLoggedIn(true);
       setUserEmail(currentUser.email || '');
     }
   }, []);
@@ -26,7 +28,15 @@ function App() {
   return (
     <div>
       <AppNavBar isLoggedIn={isLoggedIn} userEmail={userEmail} />
+      <ErrorMessage />
+      <SuccessMessage />
       <Routes>
+        <Route
+          path="/"
+          element={
+            isLoggedIn ? <Navigate to="/profile" /> : <Navigate to="/signup" />
+          }
+        />
         <Route
           path="/signup"
           element={isLoggedIn ? <Navigate to="/profile" /> : <Signup />}
@@ -35,10 +45,7 @@ function App() {
           path="/signin"
           element={isLoggedIn ? <Navigate to="/profile" /> : <Signin />}
         />
-        <Route
-          path="/signout"
-          element={<Navigate to="/signin" />}
-        />
+        <Route path="/signout" element={<Navigate to="/signin" />} />
         <Route
           path="/profile"
           element={isLoggedIn ? <Profile /> : <Navigate to="/signin" />}

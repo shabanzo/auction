@@ -8,7 +8,7 @@ interface WithRouterProps {
 }
 
 const withRouter = <P extends object>(
-  Component: ComponentType<P & { router: WithRouterProps }>
+  Component: ComponentType<P & { router: WithRouterProps }>,
 ) => {
   function ComponentWithRouterProp(props: P) {
     const location = useLocation();

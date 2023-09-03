@@ -20,9 +20,7 @@ const Signin = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [message, setMessage] = useState<string>('');
 
-  const handleSignin = async (
-    values: SigninFormValues
-  ) => {
+  const handleSignin = async (values: SigninFormValues) => {
     setMessage('');
     setLoading(true);
 
@@ -109,10 +107,7 @@ const Signin = () => {
 
                     {message && (
                       <div className="mb-3">
-                        <div
-                          className={'alert alert-danger'}
-                          role="alert"
-                        >
+                        <div className={'alert alert-danger'} role="alert">
                           {message}
                         </div>
                       </div>

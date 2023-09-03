@@ -1,25 +1,40 @@
+import { AxiosError } from 'axios';
 import React, { useEffect, useState } from 'react';
 import { Button, Col, Container, Row, Table } from 'react-bootstrap';
 import ReactPaginate from 'react-paginate';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
+import { useError } from '../contexts/error.context';
 import { Item } from '../services/interface';
 import itemService from '../services/item.service';
+import userService from '../services/user.service';
 
 const BidItemsList: React.FC = () => {
+  const navigate = useNavigate();
+  const { addError } = useError();
   const [items, setItems] = useState<Item[]>([]);
   const [pageCount, setPageCount] = useState<number>(0);
   const [currentPage, setCurrentPage] = useState<number>(0);
 
   const location = useLocation();
   const urlSearchParams = new URLSearchParams(location.search);
-  const initialPage: number = parseInt(urlSearchParams.get('page') || '1', 10) - 1;
+  const initialPage: number =
+    parseInt(urlSearchParams.get('page') || '1', 10) - 1;
 
   useEffect(() => {
     const fetchData = async () => {
-      const paginatedItems = await itemService.getBidItems(currentPage);
-      setItems(paginatedItems.items);
-      setPageCount(paginatedItems.totalPages);
+      try {
+        const response = await itemService.getBidItems(currentPage);
+        setItems(response.data.items);
+        setPageCount(response.data.totalPages);
+      } catch (error: AxiosError | any) {
+        if (error.response.status == 401) {
+          userService.signout();
+          navigate('/signin');
+          addError("You're not authorized or you token has been expired!");
+          window.location.reload();
+        }
+      }
     };
 
     fetchData();

@@ -1,36 +1,38 @@
 import axios, { AxiosResponse } from 'axios';
 
 import authHeader from './auth.header';
-import { ItemLite, PaginatedItems } from './interface';
+import { Item, ItemLite, PaginatedItems } from './interface';
 
 const API_URL = 'http://localhost:3000/api/v1/items/';
 
 class ItemService {
-
-  async getMine(currentPage: number): Promise<PaginatedItems> {
+  getMine(currentPage: number): Promise<AxiosResponse<PaginatedItems>> {
     const headers = authHeader();
-    const response: AxiosResponse<PaginatedItems> = await axios.get(`${API_URL}mine?page=${currentPage + 1}`, { headers });
-    return response.data;
+    return axios.get<PaginatedItems>(`${API_URL}mine?page=${currentPage + 1}`, {
+      headers,
+    });
   }
 
-  async getBidItems(currentPage: number): Promise<PaginatedItems> {
+  getBidItems(currentPage: number): Promise<AxiosResponse<PaginatedItems>> {
     const headers = authHeader();
-    const response: AxiosResponse<PaginatedItems> = await axios.get(`${API_URL}auction?page=${currentPage + 1}`, { headers });
-    return response.data;
+    return axios.get(`${API_URL}auction?page=${currentPage + 1}`, { headers });
   }
 
-  async create(item: ItemLite): Promise<void> {
+  create(item: ItemLite): Promise<AxiosResponse<Item>> {
     const headers = authHeader();
 
-    await axios.post(API_URL, item, { headers })
+    return axios.post<Item>(API_URL, item, { headers });
   }
 
-  async publish(id: number): Promise<void> {
+  publish(id: number): Promise<AxiosResponse<Item>> {
     const headers = authHeader();
 
-    await axios.put(`${API_URL}${id}`, { publishedAt: new Date }, { headers })
+    return axios.put<Item>(
+      `${API_URL}${id}`,
+      { publishedAt: new Date() },
+      { headers },
+    );
   }
-
 }
 
 export default new ItemService();

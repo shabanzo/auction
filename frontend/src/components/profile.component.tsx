@@ -36,12 +36,10 @@ const Profile = () => {
 
   const handleConfirmDeposit = async (values: DepositFormValues) => {
     try {
-      await authService.deposit(values.amount).then(
-        () => {
-          const updatedUser = authService.getCurrentUser();
-          setUser(updatedUser);
-        }
-      );
+      await authService.deposit(values.amount).then(() => {
+        const updatedUser = authService.getCurrentUser();
+        setUser(updatedUser);
+      });
       setShowDepositModal(false);
     } catch (error) {
       // Handle errors (e.g., display an error message to the user)
