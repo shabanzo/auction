@@ -1,12 +1,12 @@
 import { UserRequest } from 'app.middleware';
 import { Repository } from 'typeorm';
-import { User } from 'user/user.entity';
 
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { Item } from '../../item/item.entity';
+import { User } from '../../user/user.entity';
 import { BidController } from '../bid.controller';
 import { Bid } from '../bid.entity';
 import { BidService } from '../bid.service';
@@ -27,6 +27,10 @@ const mockItemRepository = {
   update: jest.fn(),
 };
 
+const mockUserRepository = {
+  update: jest.fn(),
+};
+
 const mockCacheService = {
   get: jest.fn(),
   set: jest.fn(),
@@ -36,6 +40,7 @@ describe('BidController (Integration)', () => {
   let bidController: BidController;
   let bidRepository: Repository<Bid>;
   let itemRepository: Repository<Item>;
+  let userRepository: Repository<User>;
   let cacheService: Cache;
 
   beforeEach(async () => {
@@ -52,6 +57,10 @@ describe('BidController (Integration)', () => {
           useValue: mockItemRepository,
         },
         {
+          provide: getRepositoryToken(User),
+          useValue: mockUserRepository,
+        },
+        {
           provide: CACHE_MANAGER,
           useValue: mockCacheService,
         },
@@ -61,6 +70,7 @@ describe('BidController (Integration)', () => {
     bidController = module.get<BidController>(BidController);
     bidRepository = module.get<Repository<Bid>>(getRepositoryToken(Bid));
     itemRepository = module.get<Repository<Item>>(getRepositoryToken(Item));
+    userRepository = module.get<Repository<User>>(getRepositoryToken(User));
     cacheService = module.get<Cache>(CACHE_MANAGER);
 
     jest.clearAllMocks();
@@ -100,6 +110,9 @@ describe('BidController (Integration)', () => {
       );
       expect(mockItemRepository.update).toHaveBeenCalledWith(item, {
         currentPrice: bidDto.amount,
+      });
+      expect(mockUserRepository.update).toHaveBeenCalledWith(user, {
+        walletBalance: user.walletBalance - bidDto.amount,
       });
       expect(result).toEqual(createdBid);
     });

@@ -1,7 +1,6 @@
 import { BidCreateDto } from 'bid/dto/bid-create.dto';
 import { Cache } from 'cache-manager';
 import { Repository } from 'typeorm';
-import { User } from 'user/user.entity';
 
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import {
@@ -13,6 +12,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Item } from '../item/item.entity';
+import { User } from '../user/user.entity';
 import { Bid } from './bid.entity';
 
 @Injectable()
@@ -22,6 +22,8 @@ export class BidService {
     private readonly bidRepository: Repository<Bid>,
     @InjectRepository(Item)
     private readonly itemRepository: Repository<Item>,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
     @Inject(CACHE_MANAGER) private cacheService: Cache,
   ) {}
 
@@ -43,6 +45,10 @@ export class BidService {
       throw new UnprocessableEntityException(
         'Your bid lower than the current price.',
       );
+    } else if (user.walletBalance < bidDto.amount) {
+      throw new UnprocessableEntityException(
+        'Your balance lower than the bid amount.',
+      );
     }
 
     const newBid = {
@@ -54,6 +60,8 @@ export class BidService {
     const createdBid = this.bidRepository.save(bid);
     await this.cacheService.set(cacheKey, true, 5);
     await this.itemRepository.update(item, { currentPrice: bidDto.amount });
+    const newBalance = Number(user.walletBalance) - bidDto.amount;
+    await this.userRepository.update(user, { walletBalance: newBalance });
     return createdBid;
   }
 }

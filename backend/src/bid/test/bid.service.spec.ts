@@ -26,12 +26,16 @@ const mockItemRepository = {
   update: jest.fn(),
 };
 
+const mockUserRepository = {
+  update: jest.fn(),
+};
+
 const mockCacheService = {
   get: jest.fn(),
   set: jest.fn(),
 };
 
-const user: User = { id: 1 } as User;
+const user: User = { id: 1, walletBalance: 1000 } as User;
 const item: Item = { id: 2, currentPrice: 40, bids: [] } as Item;
 
 const bidDto: BidCreateDto = { itemId: 2, amount: 50 };
@@ -42,6 +46,7 @@ describe('BidService', () => {
   let bidService: BidService;
   let bidRepository: Repository<Bid>;
   let itemRepository: Repository<Item>;
+  let userRepository: Repository<User>;
   let cacheService: Cache;
 
   beforeEach(async () => {
@@ -57,6 +62,10 @@ describe('BidService', () => {
           useValue: mockItemRepository,
         },
         {
+          provide: getRepositoryToken(User),
+          useValue: mockUserRepository,
+        },
+        {
           provide: CACHE_MANAGER,
           useValue: mockCacheService,
         },
@@ -66,6 +75,7 @@ describe('BidService', () => {
     bidService = module.get<BidService>(BidService);
     bidRepository = module.get<Repository<Bid>>(getRepositoryToken(Bid));
     itemRepository = module.get<Repository<Item>>(getRepositoryToken(Item));
+    userRepository = module.get<Repository<User>>(getRepositoryToken(User));
     cacheService = module.get<Cache>(CACHE_MANAGER);
 
     jest.clearAllMocks();
@@ -100,6 +110,9 @@ describe('BidService', () => {
       expect(mockItemRepository.update).toHaveBeenCalledWith(item, {
         currentPrice: bidDto.amount,
       });
+      expect(mockUserRepository.update).toHaveBeenCalledWith(user, {
+        walletBalance: user.walletBalance - bidDto.amount,
+      });
       expect(result).toEqual(createdBid);
     });
 
@@ -121,6 +134,7 @@ describe('BidService', () => {
       expect(mockBidRepository.save).not.toHaveBeenCalled();
       expect(mockCacheService.set).not.toHaveBeenCalled();
       expect(mockItemRepository.update).not.toHaveBeenCalledWith();
+      expect(mockUserRepository.update).not.toHaveBeenCalledWith();
     });
 
     it('should throw UnprocessableEntityException if bid amount is lower than current price', async () => {
@@ -143,6 +157,7 @@ describe('BidService', () => {
       expect(mockBidRepository.save).not.toHaveBeenCalled();
       expect(mockCacheService.set).not.toHaveBeenCalled();
       expect(mockItemRepository.update).not.toHaveBeenCalledWith();
+      expect(mockUserRepository.update).not.toHaveBeenCalledWith();
     });
 
     it('should throw UnprocessableEntityException if bid is placed within 5 seconds', async () => {
@@ -162,6 +177,7 @@ describe('BidService', () => {
       expect(mockItemRepository.findOneBy).not.toHaveBeenCalled();
       expect(mockBidRepository.create).not.toHaveBeenCalled();
       expect(mockBidRepository.save).not.toHaveBeenCalled();
+      expect(mockUserRepository.update).not.toHaveBeenCalledWith();
     });
   });
 });
