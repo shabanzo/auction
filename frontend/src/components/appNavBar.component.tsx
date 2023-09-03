@@ -25,11 +25,11 @@ const AppNavBar: React.FC<NavigationBarProps> = ({ isLoggedIn, userEmail }) => {
         {isLoggedIn ? (
           <Navbar.Collapse id="responsive-navbar-nav">
             <Nav className="me-auto">
-              <LinkContainer to="/items">
-                <Nav.Link>Items</Nav.Link>
-              </LinkContainer>
               <LinkContainer to="/bidItems">
                 <Nav.Link>Bid Items</Nav.Link>
+              </LinkContainer>
+              <LinkContainer to="/items">
+                <Nav.Link>My Items</Nav.Link>
               </LinkContainer>
             </Nav>
             <Nav>

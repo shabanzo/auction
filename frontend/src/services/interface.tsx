@@ -35,3 +35,10 @@ export interface PaginatedBidItems {
   page: number;
   items: BidItem[];
 }
+
+export interface Bid {
+  id: number;
+  amount: number;
+  item: Item;
+  user: User;
+}

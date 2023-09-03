@@ -32,12 +32,6 @@ function App() {
       <SuccessMessage />
       <Routes>
         <Route
-          path="/"
-          element={
-            isLoggedIn ? <Navigate to="/profile" /> : <Navigate to="/signup" />
-          }
-        />
-        <Route
           path="/signup"
           element={isLoggedIn ? <Navigate to="/profile" /> : <Signup />}
         />
@@ -45,19 +39,19 @@ function App() {
           path="/signin"
           element={isLoggedIn ? <Navigate to="/profile" /> : <Signin />}
         />
-        <Route path="/signout" element={<Navigate to="/signin" />} />
         <Route
-          path="/profile"
-          element={isLoggedIn ? <Profile /> : <Navigate to="/signin" />}
+          path="/bidItems"
+          element={isLoggedIn ? <BidItemsList /> : <Navigate to="/signin" />}
         />
         <Route
           path="/items"
           element={isLoggedIn ? <ItemsList /> : <Navigate to="/signin" />}
         />
         <Route
-          path="/bidItems"
-          element={isLoggedIn ? <BidItemsList /> : <Navigate to="/signin" />}
+          path="/profile"
+          element={isLoggedIn ? <Profile /> : <Navigate to="/signin" />}
         />
+        <Route path="/signout" element={<Navigate to="/signin" />} />
       </Routes>
     </div>
   );

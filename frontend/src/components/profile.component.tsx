@@ -1,8 +1,11 @@
+import { AxiosError } from 'axios';
 import { ErrorMessage, Form, Formik } from 'formik';
 import React, { useEffect, useState } from 'react';
 import { Button, Card, Modal } from 'react-bootstrap';
 import * as Yup from 'yup';
 
+import { useError } from '../contexts/error.context';
+import { useSuccess } from '../contexts/success.context';
 import { User } from '../services/interface';
 import authService from '../services/user.service';
 
@@ -18,6 +21,8 @@ interface DepositFormValues {
 }
 
 const Profile = () => {
+  const { addError } = useError();
+  const { addSuccess } = useSuccess();
   const [showDepositModal, setShowDepositModal] = useState<boolean>(false);
   const [user, setUser] = useState<User | null>(null);
 
@@ -41,9 +46,9 @@ const Profile = () => {
         setUser(updatedUser);
       });
       setShowDepositModal(false);
-    } catch (error) {
-      // Handle errors (e.g., display an error message to the user)
-      console.error('Error depositing funds:', error);
+      addSuccess(`Added ${values.amount} to your account!`);
+    } catch (error: AxiosError | any) {
+      addError(error.message);
     }
   };
 

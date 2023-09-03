@@ -42,6 +42,14 @@ const ItemsList: React.FC = () => {
         navigate('/signin');
         addError("You're not authorized or you token has been expired!");
         window.location.reload();
+      } else {
+        const resMessage =
+          (error.response &&
+            error.response.data &&
+            error.response.data.message) ||
+          error.message ||
+          error.toString();
+        addError(resMessage);
       }
     }
   };
