@@ -1,12 +1,12 @@
-import { User } from './interface';
-
 export default function authHeader(): Record<string, string> {
-  const userJson = localStorage.getItem('user');
+  if (typeof document !== 'undefined' && document) {
+    const token = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('token'))
+      ?.split('=')[1];
 
-  if (userJson) {
-    const user: User = JSON.parse(userJson);
-    if (user.token) {
-      return { Authorization: 'Bearer ' + user.token };
+    if (token) {
+      return { Authorization: 'Bearer ' + token };
     }
   }
 

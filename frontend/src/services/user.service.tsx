@@ -13,7 +13,9 @@ class UserService {
   signin(authParams: authParams): Promise<AxiosResponse<User>> {
     return axios.post<User>(API_URL + 'signin', authParams).then((response) => {
       if (response.data.token) {
-        localStorage.setItem('user', JSON.stringify(response.data));
+        const { token, ...userData } = response.data;
+        document.cookie = `token=${token}`;
+        localStorage.setItem('user', JSON.stringify(userData));
       }
 
       return response;
@@ -39,13 +41,10 @@ class UserService {
       .get<User>(API_URL + 'myProfile', { headers })
       .then((response) => {
         if (response.status === 200) {
-          const user = this.getCurrentUser();
-          if (user && response.data.walletBalance !== undefined) {
-            user.walletBalance = response.data.walletBalance;
-            localStorage.setItem('user', JSON.stringify(user));
+          if (response.data.walletBalance !== undefined) {
+            localStorage.setItem('user', JSON.stringify(response.data));
+            return response;
           }
-
-          return response;
         } else {
           return Promise.reject(response);
         }
@@ -62,10 +61,8 @@ class UserService {
       .post<User>(API_URL + 'deposit', { amount }, { headers })
       .then((response) => {
         if (response.status === 200) {
-          const user = this.getCurrentUser();
-          if (user && response.data.walletBalance !== undefined) {
-            user.walletBalance = response.data.walletBalance;
-            localStorage.setItem('user', JSON.stringify(user));
+          if (response.data.walletBalance !== undefined) {
+            localStorage.setItem('user', JSON.stringify(response.data));
           }
 
           return response;
