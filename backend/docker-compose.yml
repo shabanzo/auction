@@ -1,21 +1,13 @@
 version: '3.9'
 services:
-  frontend:
-    container_name: frontend
-    build:
-      context: ./frontend
-    ports:
-      - ${CLIENT_PORT}:${CLIENT_EXPOSED_PORT}
-    volumes:
-      - ./frontend:/frontend
-    command: npm run start
   backend:
     container_name: backend
     build:
       dockerfile: Dockerfile
-      context: ./backend
+      context: .
+      target: development
     volumes:
-      - ./backend:/backend
+      - .:/usr/src/app
     environment:
       APP_PORT: ${APP_PORT}
       JWT_SECRET: ${JWT_SECRET}
@@ -50,7 +42,7 @@ services:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASS}
     volumes:
-      - data:/var/lib/postgresql/data
+      - auction:/var/lib/postgresql/data
   pgadmin:
     image: dpage/pgadmin4
     restart: always
@@ -65,4 +57,4 @@ services:
 volumes:
   redis:
     driver: local
-  data:
+  auction:

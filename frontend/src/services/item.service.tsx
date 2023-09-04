@@ -33,8 +33,8 @@ class ItemService {
   publish(id: number): Promise<AxiosResponse<Item>> {
     const headers = authHeader();
 
-    return axios.put<Item>(
-      `${API_URL}${id}`,
+    return axios.post<Item>(
+      `${API_URL}${id}/publish`,
       { publishedAt: new Date() },
       { headers },
     );
