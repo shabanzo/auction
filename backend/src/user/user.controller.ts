@@ -21,6 +21,7 @@ import {
 import { UserDepositDto } from './dto/user-deposit.dto';
 import { UserSigninDto } from './dto/user-signin.dto';
 import { UserSignupDto } from './dto/user-signup.dto';
+import { User } from './user.entity';
 import { UserService } from './user.service';
 
 @ApiTags('Users')
@@ -29,9 +30,10 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get('/myProfile')
+  @ApiBearerAuth()
   @ApiOkResponse({ description: 'Ok' })
   @HttpCode(HttpStatus.OK)
-  async MyProfile(@Req() req: UserRequest): Promise<any> {
+  async MyProfile(@Req() req: UserRequest): Promise<User> {
     return req.user;
   }
 
@@ -39,7 +41,7 @@ export class UserController {
   @ApiCreatedResponse({ description: 'User created successfully' })
   @ApiConflictResponse({ description: 'The email already exists' })
   @HttpCode(HttpStatus.CREATED)
-  async Signup(@Body() userSignupDto: UserSignupDto): Promise<any> {
+  async Signup(@Body() userSignupDto: UserSignupDto): Promise<User> {
     const result = await this.userService.signup(userSignupDto);
     return result;
   }
@@ -48,7 +50,7 @@ export class UserController {
   @ApiOkResponse({ description: 'User authenticated successfully' })
   @ApiUnauthorizedResponse({ description: 'Incorrect username or password' })
   @HttpCode(HttpStatus.OK)
-  async Signin(@Body() userSigninDto: UserSigninDto): Promise<any> {
+  async Signin(@Body() userSigninDto: UserSigninDto): Promise<User> {
     const result = await this.userService.signin(userSigninDto);
     return result;
   }
@@ -61,7 +63,7 @@ export class UserController {
   async Deposit(
     @Req() req: UserRequest,
     @Body() depositDto: UserDepositDto,
-  ): Promise<any> {
+  ): Promise<User> {
     const result = await this.userService.deposit(req.user, depositDto);
     return result;
   }
