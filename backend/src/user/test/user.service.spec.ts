@@ -1,5 +1,4 @@
 import * as bcrypt from 'bcryptjs';
-import { Repository } from 'typeorm';
 
 import { HttpException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
@@ -32,7 +31,6 @@ const user = {
 
 describe('UserService', () => {
   let userService: UserService;
-  let userRepository: Repository<User>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -50,7 +48,6 @@ describe('UserService', () => {
     }).compile();
 
     userService = module.get<UserService>(UserService);
-    userRepository = module.get<Repository<User>>(getRepositoryToken(User));
 
     jest.clearAllMocks();
   });

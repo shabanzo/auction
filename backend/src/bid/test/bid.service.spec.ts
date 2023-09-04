@@ -1,6 +1,4 @@
 import { BidCreateDto } from 'bid/dto/bid-create.dto';
-import { Cache } from 'cache-manager';
-import { Repository } from 'typeorm';
 
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import {
@@ -44,10 +42,6 @@ const createdBid: Bid = { ...bidDto, id: 1, user, item };
 
 describe('BidService', () => {
   let bidService: BidService;
-  let bidRepository: Repository<Bid>;
-  let itemRepository: Repository<Item>;
-  let userRepository: Repository<User>;
-  let cacheService: Cache;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -73,10 +67,6 @@ describe('BidService', () => {
     }).compile();
 
     bidService = module.get<BidService>(BidService);
-    bidRepository = module.get<Repository<Bid>>(getRepositoryToken(Bid));
-    itemRepository = module.get<Repository<Item>>(getRepositoryToken(Item));
-    userRepository = module.get<Repository<User>>(getRepositoryToken(User));
-    cacheService = module.get<Cache>(CACHE_MANAGER);
 
     jest.clearAllMocks();
   });

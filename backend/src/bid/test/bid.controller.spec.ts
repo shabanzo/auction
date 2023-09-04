@@ -1,5 +1,4 @@
 import { UserRequest } from 'app.middleware';
-import { Repository } from 'typeorm';
 
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Test, TestingModule } from '@nestjs/testing';
@@ -38,10 +37,6 @@ const mockCacheService = {
 
 describe('BidController (Integration)', () => {
   let bidController: BidController;
-  let bidRepository: Repository<Bid>;
-  let itemRepository: Repository<Item>;
-  let userRepository: Repository<User>;
-  let cacheService: Cache;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -68,10 +63,6 @@ describe('BidController (Integration)', () => {
     }).compile();
 
     bidController = module.get<BidController>(BidController);
-    bidRepository = module.get<Repository<Bid>>(getRepositoryToken(Bid));
-    itemRepository = module.get<Repository<Item>>(getRepositoryToken(Item));
-    userRepository = module.get<Repository<User>>(getRepositoryToken(User));
-    cacheService = module.get<Cache>(CACHE_MANAGER);
 
     jest.clearAllMocks();
   });

@@ -1,5 +1,3 @@
-import { Repository } from 'typeorm';
-
 import { NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
@@ -19,7 +17,6 @@ const mockRepository = {
 
 describe('ItemService', () => {
   let itemService: ItemService;
-  let itemRepository: Repository<Item>;
 
   beforeEach(async () => {
     jest.clearAllMocks();
@@ -34,7 +31,6 @@ describe('ItemService', () => {
     }).compile();
 
     itemService = module.get<ItemService>(ItemService);
-    itemRepository = module.get<Repository<Item>>(getRepositoryToken(Item));
 
     jest.clearAllMocks();
   });
