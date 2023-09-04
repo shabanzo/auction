@@ -1,15 +1,15 @@
 import { isAuthenticated } from 'app.middleware';
-import { BidQueueModule } from 'bid-queue/bid-queue.module';
+import { BidCompletedProcessor } from 'bid-queue/bid-completed.processor';
 import { BidController } from 'bid/bid.controller';
 import { Bid } from 'bid/bid.entity';
-import { BidModule } from 'bid/bid.module';
+import { BidService } from 'bid/bid.service';
 import { redisStore } from 'cache-manager-redis-yet';
 import { ItemController } from 'item/item.controller';
 import { Item } from 'item/item.entity';
-import { ItemModule } from 'item/item.module';
+import { ItemService } from 'item/item.service';
 import { UserController } from 'user/user.controller';
 import { User } from 'user/user.entity';
-import { UserModule } from 'user/user.module';
+import { UserService } from 'user/user.service';
 import { secret } from 'utils/constants';
 
 import { BullModule } from '@nestjs/bull';
@@ -31,6 +31,9 @@ import { AppService } from './app.service';
         port: Number(process.env.REDIS_PORT),
       },
     }),
+    BullModule.registerQueue({
+      name: 'bidQueue',
+    }),
     CacheModule.registerAsync({
       isGlobal: true,
       useFactory: async () => ({
@@ -48,6 +51,7 @@ import { AppService } from './app.service';
       signOptions: { expiresIn: '1h' },
     }),
     ThrottlerModule.forRoot({ limit: 10, ttl: 60 }),
+    TypeOrmModule.forFeature([User, Item, Bid]),
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.DB_HOST,
@@ -59,13 +63,15 @@ import { AppService } from './app.service';
       logging: true,
       entities: [User, Item, Bid],
     }),
-    UserModule,
-    ItemModule,
-    BidModule,
-    BidQueueModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [AppController, UserController, ItemController, BidController],
+  providers: [
+    AppService,
+    UserService,
+    ItemService,
+    BidService,
+    BidCompletedProcessor,
+  ],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
