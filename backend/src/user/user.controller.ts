@@ -3,6 +3,7 @@ import { UserRequest } from 'app.middleware';
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
   Post,
@@ -26,6 +27,13 @@ import { UserService } from './user.service';
 @Controller('/api/v1/user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
+
+  @Get('/myProfile')
+  @ApiOkResponse({ description: 'Ok' })
+  @HttpCode(HttpStatus.OK)
+  async MyProfile(@Req() req: UserRequest): Promise<any> {
+    return req.user;
+  }
 
   @Post('/signup')
   @ApiCreatedResponse({ description: 'User created successfully' })

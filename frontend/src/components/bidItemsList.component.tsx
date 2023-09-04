@@ -64,6 +64,7 @@ const BidItemsList: React.FC = () => {
       const response = await bidService.bid(itemId, amount);
       const bid = response.data;
       const item = bid.item;
+      userService.updateUserData();
       fetchData();
       setSelectedItem(null);
       addSuccess(
