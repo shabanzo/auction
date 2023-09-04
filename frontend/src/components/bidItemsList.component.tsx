@@ -21,7 +21,7 @@ const BidItemsList: React.FC = () => {
   const [pageCount, setPageCount] = useState<number>(0);
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
-  const [completed, setCompleted] = useState<boolean>(true);
+  const [completed, setCompleted] = useState<boolean>(false);
 
   const location = useLocation();
   const urlSearchParams = new URLSearchParams(location.search);
