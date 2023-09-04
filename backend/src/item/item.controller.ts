@@ -11,7 +11,6 @@ import {
   Param,
   ParseBoolPipe,
   Post,
-  Put,
   Query,
   Req,
 } from '@nestjs/common';
@@ -24,7 +23,7 @@ import {
 } from '@nestjs/swagger';
 
 import { ItemCreateDto } from './dto/item-create.dto';
-import { ItemUpdateDto } from './dto/item-update.dto';
+import { ItemPublishDto } from './dto/item-publish.dto';
 import { ItemService, PaginateItems } from './item.service';
 
 @ApiBearerAuth()
@@ -69,16 +68,23 @@ export class ItemController {
   @ApiCreatedResponse({ description: 'Item created successfully' })
   @HttpCode(HttpStatus.CREATED)
   async create(@Req() req: UserRequest, @Body() itemCreateDto: ItemCreateDto) {
-    const createdItem = await this.itemService.create(req.user, itemCreateDto);
-    await this.bidQueue.add('cancelFailedBids', { itemId: createdItem.id });
-    return createdItem;
+    return await this.itemService.create(req.user, itemCreateDto);
   }
 
-  @Put(':id')
-  @ApiOkResponse({ description: 'Item updated successfully' })
+  @Post(':id/publish')
+  @ApiOkResponse({ description: 'Item published successfully' })
   @ApiNotFoundResponse({ description: 'Item is not found' })
   @HttpCode(HttpStatus.OK)
-  async update(@Param('id') id: number, @Body() itemUpdateDto: ItemUpdateDto) {
-    return this.itemService.update(id, itemUpdateDto);
+  async publish(
+    @Param('id') id: number,
+    @Body() itemPublishDto: ItemPublishDto,
+  ) {
+    const publishedItem = await this.itemService.publish(id, itemPublishDto);
+    await this.bidQueue.add(
+      'cancelFailedBids',
+      { itemId: publishedItem.id },
+      { delay: publishedItem.timeWindowHours * 3600 },
+    );
+    return publishedItem;
   }
 }

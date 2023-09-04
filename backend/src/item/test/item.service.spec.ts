@@ -119,34 +119,25 @@ describe('ItemService', () => {
     });
   });
 
-  describe('update', () => {
-    it('should update and return an item', async () => {
-      const id = 1;
-      const itemDto = {
-        name: 'Updated Item',
-        startingPrice: 20,
-        timeWindowHours: 48,
-      };
-      const updatedItem = { id, ...itemDto };
+  describe('publish', () => {
+    const id = 1;
+    const itemDto = {
+      publishedAt: new Date().toString(),
+    };
+    it('should publish and return an item', async () => {
+      const publishdItem = { id, ...itemDto };
 
-      mockRepository.findOneBy.mockResolvedValue(updatedItem);
-      mockRepository.save.mockResolvedValue(updatedItem);
-      const result = await itemService.update(id, itemDto);
+      mockRepository.findOneBy.mockResolvedValue(publishdItem);
+      mockRepository.save.mockResolvedValue(publishdItem);
+      const result = await itemService.publish(id, itemDto);
       expect(mockRepository.findOneBy).toHaveBeenCalledWith({ id });
-      expect(mockRepository.save).toHaveBeenCalledWith(updatedItem);
-      expect(result).toEqual(updatedItem);
+      expect(mockRepository.save).toHaveBeenCalledWith(publishdItem);
+      expect(result).toEqual(publishdItem);
     });
 
     it('should throw NotFoundException if item is not found', async () => {
-      const id = 1;
-      const itemDto = {
-        name: 'Updated Item',
-        startingPrice: 20,
-        timeWindowHours: 48,
-      };
-
       mockRepository.findOneBy.mockResolvedValue(undefined);
-      await expect(itemService.update(id, itemDto)).rejects.toThrowError(
+      await expect(itemService.publish(id, itemDto)).rejects.toThrowError(
         NotFoundException,
       );
       expect(mockRepository.merge).not.toHaveBeenCalled();

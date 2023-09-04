@@ -6,7 +6,7 @@ import { getQueueToken } from '@nestjs/bull';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { ItemCreateDto } from '../dto/item-create.dto';
-import { ItemUpdateDto } from '../dto/item-update.dto';
+import { ItemPublishDto } from '../dto/item-publish.dto';
 import { ItemController } from '../item.controller';
 import { Item } from '../item.entity';
 import { ItemService, PaginateItems } from '../item.service';
@@ -19,8 +19,7 @@ const mockItemService = {
   findAllByUser: jest.fn(),
   findAllPublishedItems: jest.fn(),
   create: jest.fn(),
-  update: jest.fn(),
-  delete: jest.fn(),
+  publish: jest.fn(),
 };
 
 const mockBidQueue = {
@@ -174,36 +173,42 @@ describe('ItemController', () => {
         mockUserRequest.user,
         itemCreateDto,
       );
-      expect(bidQueue.add).toHaveBeenCalledWith('cancelFailedBids', {
-        itemId: createdItem.id,
-      });
       expect(result).toEqual(createdItem);
     });
   });
 
-  describe('update', () => {
-    it('should update an item', async () => {
+  describe('publish', () => {
+    it('should publish an item', async () => {
       const itemId = 6;
-      const itemUpdateDto: ItemUpdateDto = { name: 'Updated Item' };
-      const updatedItem: Item = {
+      const itemPublishDto: ItemPublishDto = {
+        publishedAt: new Date().toString(),
+      };
+      const publishdItem: Item = {
         id: itemId,
-        name: itemUpdateDto.name,
+        name: 'random',
         currentPrice: 40,
         startingPrice: 40,
-        timeWindowHours: 144,
-        publishedAt: new Date(),
+        timeWindowHours: 1,
+        publishedAt: new Date(itemPublishDto.publishedAt),
         user: mockUserRequest.user,
         bids: [],
       };
-      mockItemService.update.mockResolvedValue(updatedItem);
+      mockItemService.publish.mockResolvedValue(publishdItem);
 
-      const result = await itemController.update(itemId, itemUpdateDto);
+      const result = await itemController.publish(itemId, itemPublishDto);
 
-      expect(mockItemService.update).toHaveBeenCalledWith(
+      expect(mockItemService.publish).toHaveBeenCalledWith(
         itemId,
-        itemUpdateDto,
+        itemPublishDto,
       );
-      expect(result).toEqual(updatedItem);
+      expect(bidQueue.add).toHaveBeenCalledWith(
+        'cancelFailedBids',
+        {
+          itemId: publishdItem.id,
+        },
+        { delay: publishdItem.timeWindowHours * 3600 },
+      );
+      expect(result).toEqual(publishdItem);
     });
   });
 });

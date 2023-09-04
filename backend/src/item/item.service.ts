@@ -5,7 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { User } from '../user/user.entity';
 import { ItemCreateDto } from './dto/item-create.dto';
-import { ItemUpdateDto } from './dto/item-update.dto';
+import { ItemPublishDto } from './dto/item-publish.dto';
 import { Item } from './item.entity';
 
 export interface PaginateItems {
@@ -110,7 +110,7 @@ export class ItemService {
     return this.itemRepository.save(item);
   }
 
-  async update(id: number, itemDto: ItemUpdateDto): Promise<Item> {
+  async publish(id: number, itemDto: ItemPublishDto): Promise<Item> {
     const item = await this.itemRepository.findOneBy({ id });
     if (!item) {
       throw new NotFoundException(`Item with ID ${id} not found`);
