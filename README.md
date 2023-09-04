@@ -247,17 +247,17 @@ npm install
 3. Create a new item, and get the list of logged in user items
 4. Publish an item
    After the item is published, the system will send a job to be executed later once the bid is finished.
+   ![Flow Diagram](https://github.com/shabanzo/auction/blob/master/frontend/public/publish.png?raw=true)
 5. Get the list of ongoing/completed items
-
-- Ongoing items query: Not mine and it's already published but not passed `publishedAt` + `timeWindowHours`
-- Completed items query: Not mine and it's already published but already passed `publishedAt` + `timeWindowHours`
-- Actually, we can add a status column with enum: `draft`, `published`, `completed`, then query it by using the status but the consideration is to make the column more efficient since there's no other status than that so we can just use `publishedAt` condition.
+  - Ongoing items query: Not mine and it's already published but not passed `publishedAt` + `timeWindowHours`
+  - Completed items query: Not mine and it's already published but already passed `publishedAt` + `timeWindowHours`
+  - Actually, we can add a status column with enum: `draft`, `published`, `completed`, then query it by using the status but the consideration is to make the column more efficient since there's no other status than that so we can just use `publishedAt` condition.
 
 6. Bid item
-
-- Check the rate limit, once per 5s.
-- Check the item current price
-- Check the user balance
+  - Check the rate limit, once per 5s.
+  - Check the item current price
+  - Check the user balance
+  ![Flow Diagram](https://github.com/shabanzo/auction/blob/master/frontend/public/bid.png?raw=true)
 
 7. Cancel failed bids
 
