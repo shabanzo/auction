@@ -239,5 +239,59 @@ npm install
 
 ## Technical Documentation
 
-### ER Diagram
+### Features
+
+1. Authentication
+   Using JWT and store the token in cookie on the client side.
+2. Deposit to our balance
+3. Create a new item, and get the list of logged in user items
+4. Publish an item
+   After the item is published, the system will send a job to be executed later once the bid is finished.
+5. Get the list of ongoing/completed items
+
+- Ongoing items query: Not mine and it's already published but not passed `publishedAt` + `timeWindowHours`
+- Completed items query: Not mine and it's already published but already passed `publishedAt` + `timeWindowHours`
+- Actually, we can add a status column with enum: `draft`, `published`, `completed`, then query it by using the status but the consideration is to make the column more efficient since there's no other status than that so we can just use `publishedAt` condition.
+
+6. Bid item
+
+- Check the rate limit, once per 5s.
+- Check the item current price
+- Check the user balance
+
+7. Cancel failed bids
+
+### Technical Design
+
+#### Database Consideration
+
+MongoDB vs PostgreSQL
+
+This application has simple entity relationships, so using MongoDB or PosrgreSQL won't differ much. But these are my considerations:
+
+1. This appplication is related to money so PostgreSQL is a better choice because PostgreSQL is fully ACID compliant, and has audit trails.
+2. This application has a lot of ambiguity in the future, I mean we haven't decided what's the next development, what's structure will be like. So to handle iterations that will have more tables and relations, PostgreSQL is better than MongoDB because later if the relations become complex we will have difficulties in the query.
+
+The trade offs:
+
+1. The scalability
+   MongoDB has built-in sharding capabilities that means support horizontally upscale. And this bid functionallity will be helped a lot if we can horizontally upscale the db to handle a lot of bids. But this case can be handled if we're using Kubernetes.
+
+#### ER Diagram
+
 ![ER Diagram](https://github.com/shabanzo/auction/blob/master/frontend/public/ER.png?raw=true)
+
+#### Infrastructure Design
+
+![ER Diagram](https://github.com/shabanzo/auction/blob/master/frontend/public/architecture.png?raw=true)
+
+#### Upscaling Strategy
+
+Strategy: The combination of both horizontal upscale and vertical upscale
+
+Assuming we build the infrastructure using Kubernetes, and set autoscaling horizontally. So it could handle more bids. But since the other infrastructure resources will be impacted so we also need to vertically upscale them.
+
+Impacted resources:
+
+- Redis
+- PostgreSQL
