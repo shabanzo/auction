@@ -240,3 +240,4 @@ npm install
 ## Technical Documentation
 
 ### ER Diagram
+![ER Diagram](https://github.com/shabanzo/auction/blob/master/frontend/public/ER.png?raw=true)
