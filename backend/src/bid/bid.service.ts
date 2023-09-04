@@ -57,7 +57,7 @@ export class BidService {
     };
     const bid = this.bidRepository.create(newBid);
     const createdBid = this.bidRepository.save(bid);
-    const createdCache = await this.cacheService.set(cacheKey, true, 5);
+    await this.cacheService.set(cacheKey, true, 5);
     await this.itemRepository.update(item, { currentPrice: bidDto.amount });
     const newBalance = Number(user.walletBalance) - bidDto.amount;
     await this.userRepository.update(user, { walletBalance: newBalance });

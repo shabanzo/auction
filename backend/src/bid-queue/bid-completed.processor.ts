@@ -15,7 +15,7 @@ export class BidCompletedProcessor {
     private readonly userRepository: Repository<User>,
   ) {}
 
-  @Process()
+  @Process('cancelFailedBids')
   async cancelFailedBids(job) {
     const queryBuilder: SelectQueryBuilder<Bid> = this.bidRepository
       .createQueryBuilder('bid')
@@ -27,6 +27,7 @@ export class BidCompletedProcessor {
     const bids = await queryBuilder.getMany();
 
     if (bids.length == 0) {
+      console.log('No bids for item:', job.data.itemId);
       return;
     }
 

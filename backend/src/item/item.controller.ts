@@ -83,7 +83,7 @@ export class ItemController {
     await this.bidQueue.add(
       'cancelFailedBids',
       { itemId: publishedItem.id },
-      { delay: publishedItem.timeWindowHours * 3600 },
+      { delay: Number(publishedItem.timeWindowHours) * 3600000 },
     );
     return publishedItem;
   }

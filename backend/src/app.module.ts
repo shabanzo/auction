@@ -12,6 +12,9 @@ import { User } from 'user/user.entity';
 import { UserService } from 'user/user.service';
 import { secret } from 'utils/constants';
 
+import { BullAdapter } from '@bull-board/api/bullAdapter';
+import { ExpressAdapter } from '@bull-board/express';
+import { BullBoardModule } from '@bull-board/nestjs';
 import { BullModule } from '@nestjs/bull';
 import { CacheModule } from '@nestjs/cache-manager';
 import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
@@ -25,6 +28,14 @@ import { AppService } from './app.service';
 
 @Module({
   imports: [
+    BullBoardModule.forRoot({
+      route: '/queues',
+      adapter: ExpressAdapter,
+    }),
+    BullBoardModule.forFeature({
+      name: 'bid-queue',
+      adapter: BullAdapter,
+    }),
     BullModule.forRoot({
       redis: {
         host: process.env.REDIS_HOST,
