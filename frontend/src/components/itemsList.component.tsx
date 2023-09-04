@@ -105,30 +105,44 @@ const ItemsList: React.FC = () => {
                     <th>Current Price</th>
                     <th>Time Window (Hours)</th>
                     <th>PublishedAt</th>
+                    <th>Completed</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {items.map((item: Item) => (
-                    <tr key={item.id}>
-                      <td>{item.name}</td>
-                      <td>{item.startingPrice}</td>
-                      <td>{item.currentPrice}</td>
-                      <td>{item.timeWindowHours}</td>
-                      <td>
-                        {item.publishedAt && FormatLocalTime(item.publishedAt)}
-                      </td>
-                      <td>
-                        <Button
-                          disabled={!!item.publishedAt}
-                          variant="primary"
-                          onClick={() => handlePublish(item.id)}
-                        >
-                          Publish
-                        </Button>
-                      </td>
-                    </tr>
-                  ))}
+                  {items.map((item: Item) => {
+                    const publishedAt = new Date(item.publishedAt);
+                    const completedDate = new Date(
+                      publishedAt.getTime() +
+                        item.timeWindowHours * 60 * 60 * 1000,
+                    );
+                    const now = new Date();
+                    const bidCompleted = item.publishedAt
+                      ? now > completedDate
+                      : false;
+                    return (
+                      <tr key={item.id}>
+                        <td>{item.name}</td>
+                        <td>{item.startingPrice}</td>
+                        <td>{item.currentPrice}</td>
+                        <td>{item.timeWindowHours}</td>
+                        <td>
+                          {item.publishedAt &&
+                            FormatLocalTime(item.publishedAt)}
+                        </td>
+                        <td>{bidCompleted ? 'True' : 'False'}</td>
+                        <td>
+                          <Button
+                            disabled={!!item.publishedAt}
+                            variant="primary"
+                            onClick={() => handlePublish(item.id)}
+                          >
+                            Publish
+                          </Button>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </Table>
               <Row className="justify-content-center">
