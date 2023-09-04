@@ -39,14 +39,14 @@ describe('ItemController', () => {
           useValue: mockItemService,
         },
         {
-          provide: getQueueToken('bidQueue'),
+          provide: getQueueToken('bid-queue'),
           useValue: mockBidQueue,
         },
       ],
     }).compile();
 
     itemController = module.get<ItemController>(ItemController);
-    bidQueue = module.get<Queue>(getQueueToken('bidQueue'));
+    bidQueue = module.get<Queue>(getQueueToken('bid-queue'));
   });
 
   it('should be defined', () => {

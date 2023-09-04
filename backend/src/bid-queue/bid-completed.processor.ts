@@ -6,7 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Bid } from '../bid/bid.entity';
 import { User } from '../user/user.entity';
 
-@Processor('bidQueue')
+@Processor('bid-queue')
 export class BidCompletedProcessor {
   constructor(
     @InjectRepository(Bid)

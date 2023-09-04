@@ -30,7 +30,6 @@ export class BidService {
   async create(user: User, bidDto: BidCreateDto): Promise<Bid> {
     const cacheKey = `u${user.id}i${bidDto.itemId}`;
     const cache = await this.cacheService.get(cacheKey);
-
     if (cache) {
       throw new UnprocessableEntityException(
         'You can place a bid once every 5 seconds.',
@@ -58,7 +57,7 @@ export class BidService {
     };
     const bid = this.bidRepository.create(newBid);
     const createdBid = this.bidRepository.save(bid);
-    await this.cacheService.set(cacheKey, true, 5);
+    const createdCache = await this.cacheService.set(cacheKey, true, 5);
     await this.itemRepository.update(item, { currentPrice: bidDto.amount });
     const newBalance = Number(user.walletBalance) - bidDto.amount;
     await this.userRepository.update(user, { walletBalance: newBalance });

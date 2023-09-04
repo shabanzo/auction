@@ -32,12 +32,12 @@ import { AppService } from './app.service';
       },
     }),
     BullModule.registerQueue({
-      name: 'bidQueue',
+      name: 'bid-queue',
     }),
-    CacheModule.registerAsync({
+    CacheModule.register({
       isGlobal: true,
-      useFactory: async () => ({
-        store: await redisStore({
+      useFactory: () => ({
+        store: redisStore({
           socket: {
             host: process.env.REDIS_HOST,
             port: Number(process.env.REDIS_PORT),

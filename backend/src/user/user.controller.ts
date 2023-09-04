@@ -50,7 +50,7 @@ export class UserController {
   @ApiOkResponse({ description: 'User authenticated successfully' })
   @ApiUnauthorizedResponse({ description: 'Incorrect username or password' })
   @HttpCode(HttpStatus.OK)
-  async Signin(@Body() userSigninDto: UserSigninDto): Promise<User> {
+  async Signin(@Body() userSigninDto: UserSigninDto): Promise<any> {
     const result = await this.userService.signin(userSigninDto);
     return result;
   }

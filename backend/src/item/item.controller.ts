@@ -32,7 +32,7 @@ import { ItemService, PaginateItems } from './item.service';
 export class ItemController {
   constructor(
     private readonly itemService: ItemService,
-    @InjectQueue('bidQueue')
+    @InjectQueue('bid-queue')
     private readonly bidQueue: Queue,
   ) {}
 
