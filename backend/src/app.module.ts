@@ -1,4 +1,5 @@
 import { isAuthenticated } from 'app.middleware';
+import { BidQueueModule } from 'bid-queue/bid-queue.module';
 import { BidController } from 'bid/bid.controller';
 import { Bid } from 'bid/bid.entity';
 import { BidModule } from 'bid/bid.module';
@@ -11,6 +12,7 @@ import { User } from 'user/user.entity';
 import { UserModule } from 'user/user.module';
 import { secret } from 'utils/constants';
 
+import { BullModule } from '@nestjs/bull';
 import { CacheModule } from '@nestjs/cache-manager';
 import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
@@ -23,6 +25,12 @@ import { AppService } from './app.service';
 
 @Module({
   imports: [
+    BullModule.forRoot({
+      redis: {
+        host: process.env.REDIS_HOST,
+        port: Number(process.env.REDIS_PORT),
+      },
+    }),
     CacheModule.registerAsync({
       isGlobal: true,
       useFactory: async () => ({
@@ -54,6 +62,7 @@ import { AppService } from './app.service';
     UserModule,
     ItemModule,
     BidModule,
+    BidQueueModule,
   ],
   controllers: [AppController],
   providers: [AppService],

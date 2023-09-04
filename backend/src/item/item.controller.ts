@@ -1,5 +1,7 @@
 import { UserRequest } from 'app.middleware';
+import { Queue } from 'bull';
 
+import { InjectQueue } from '@nestjs/bull';
 import {
   Body,
   Controller,
@@ -29,7 +31,11 @@ import { ItemService, PaginateItems } from './item.service';
 @ApiTags('Items')
 @Controller('/api/v1/items')
 export class ItemController {
-  constructor(private readonly itemService: ItemService) {}
+  constructor(
+    private readonly itemService: ItemService,
+    @InjectQueue('bidQueue')
+    private readonly bidQueue: Queue,
+  ) {}
 
   @Get('mine')
   @ApiOkResponse({ description: 'Ok' })
@@ -63,7 +69,9 @@ export class ItemController {
   @ApiCreatedResponse({ description: 'Item created successfully' })
   @HttpCode(HttpStatus.CREATED)
   async create(@Req() req: UserRequest, @Body() itemCreateDto: ItemCreateDto) {
-    return this.itemService.create(req.user, itemCreateDto);
+    const createdItem = await this.itemService.create(req.user, itemCreateDto);
+    await this.bidQueue.add('cancelFailedBids', { itemId: createdItem.id });
+    return createdItem;
   }
 
   @Put(':id')

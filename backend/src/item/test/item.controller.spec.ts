@@ -1,6 +1,8 @@
 import { UserRequest } from 'app.middleware';
+import { Queue } from 'bull';
 import { User } from 'user/user.entity';
 
+import { getQueueToken } from '@nestjs/bull';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { ItemCreateDto } from '../dto/item-create.dto';
@@ -21,8 +23,13 @@ const mockItemService = {
   delete: jest.fn(),
 };
 
+const mockBidQueue = {
+  add: jest.fn(),
+};
+
 describe('ItemController', () => {
   let itemController: ItemController;
+  let bidQueue: Queue;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -32,10 +39,15 @@ describe('ItemController', () => {
           provide: ItemService,
           useValue: mockItemService,
         },
+        {
+          provide: getQueueToken('bidQueue'),
+          useValue: mockBidQueue,
+        },
       ],
     }).compile();
 
     itemController = module.get<ItemController>(ItemController);
+    bidQueue = module.get<Queue>(getQueueToken('bidQueue'));
   });
 
   it('should be defined', () => {
@@ -162,6 +174,9 @@ describe('ItemController', () => {
         mockUserRequest.user,
         itemCreateDto,
       );
+      expect(bidQueue.add).toHaveBeenCalledWith('cancelFailedBids', {
+        itemId: createdItem.id,
+      });
       expect(result).toEqual(createdItem);
     });
   });
