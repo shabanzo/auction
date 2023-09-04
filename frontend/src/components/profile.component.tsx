@@ -7,7 +7,7 @@ import * as Yup from 'yup';
 import { useError } from '../contexts/error.context';
 import { useSuccess } from '../contexts/success.context';
 import { User } from '../services/interface';
-import authService from '../services/user.service';
+import userService from '../services/user.service';
 
 const depositValidationSchema = Yup.object().shape({
   amount: Yup.number()
@@ -27,7 +27,8 @@ const Profile = () => {
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    const currentUser = authService.getCurrentUser();
+    userService.updateUserData();
+    const currentUser = userService.getCurrentUser();
     setUser(currentUser);
   }, []);
 
@@ -41,8 +42,8 @@ const Profile = () => {
 
   const handleConfirmDeposit = async (values: DepositFormValues) => {
     try {
-      await authService.deposit(values.amount).then(() => {
-        const updatedUser = authService.getCurrentUser();
+      await userService.deposit(values.amount).then(() => {
+        const updatedUser = userService.getCurrentUser();
         setUser(updatedUser);
       });
       setShowDepositModal(false);
