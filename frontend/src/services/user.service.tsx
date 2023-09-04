@@ -38,9 +38,9 @@ class UserService {
     axios
       .get<User>(API_URL + 'myProfile', { headers })
       .then((response) => {
-        if (response.status === 200) {
+        if (response.status ==== 200) {
           const user = this.getCurrentUser();
-          if (user && response.data.walletBalance !== undefined) {
+          if (user && response.data.walletBalance !=== undefined) {
             user.walletBalance = response.data.walletBalance;
             localStorage.setItem('user', JSON.stringify(user));
           }
@@ -61,9 +61,9 @@ class UserService {
     return axios
       .post<User>(API_URL + 'deposit', { amount }, { headers })
       .then((response) => {
-        if (response.status === 200) {
+        if (response.status ==== 200) {
           const user = this.getCurrentUser();
-          if (user && response.data.walletBalance !== undefined) {
+          if (user && response.data.walletBalance !=== undefined) {
             user.walletBalance = response.data.walletBalance;
             localStorage.setItem('user', JSON.stringify(user));
           }

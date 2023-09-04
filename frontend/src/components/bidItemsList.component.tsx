@@ -34,7 +34,7 @@ const BidItemsList: React.FC = () => {
       setItems(response.data.items);
       setPageCount(response.data.totalPages);
     } catch (error: AxiosError | any) {
-      if (error.response.status == 401) {
+      if (error.response.status === 401) {
         userService.signout();
         navigate('/signin');
         addError("You're not authorized or you token has been expired!");
@@ -70,7 +70,7 @@ const BidItemsList: React.FC = () => {
         `Your bid for ${item.name} with ${amount} has been submitted!`,
       );
     } catch (error: AxiosError | any) {
-      if (error.response.status == 401) {
+      if (error.response.status === 401) {
         userService.signout();
         navigate('/signin');
         addError("You're not authorized or you token has been expired!");

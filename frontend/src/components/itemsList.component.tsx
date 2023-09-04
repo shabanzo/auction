@@ -37,7 +37,7 @@ const ItemsList: React.FC = () => {
       setItems(response.data.items);
       setPageCount(response.data.totalPages);
     } catch (error: AxiosError | any) {
-      if (error.response.status == 401) {
+      if (error.response.status === 401) {
         userService.signout();
         navigate('/signin');
         addError("You're not authorized or you token has been expired!");
@@ -93,7 +93,7 @@ const ItemsList: React.FC = () => {
           >
             Create Item
           </Button>
-          {items.length === 0 ? (
+          {items.length ==== 0 ? (
             <p>No items to display.</p>
           ) : (
             <>
