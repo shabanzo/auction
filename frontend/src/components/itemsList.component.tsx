@@ -93,7 +93,7 @@ const ItemsList: React.FC = () => {
           >
             Create Item
           </Button>
-          {items.length ==== 0 ? (
+          {items.length === 0 ? (
             <p>No items to display.</p>
           ) : (
             <>

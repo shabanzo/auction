@@ -27,7 +27,6 @@ const Profile = () => {
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    userService.updateUserData();
     const currentUser = userService.getCurrentUser();
     setUser(currentUser);
   }, []);
