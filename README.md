@@ -13,8 +13,6 @@ This is an auction application where the users can bid!
    - [Items](https://github.com/shabanzo/auction/blob/main/README.md#items)
    - [Bids](https://github.com/shabanzo/auction/blob/main/README.md#bids)
 5. [Technical Documentation](https://github.com/shabanzo/auction/blob/main/README.md#api-documentation)
-6. [How to Add A New Channel](https://github.com/shabanzo/auction/tree/main#how-to-add-a-new-channel)
-7. [Additional Notes](https://github.com/shabanzo/auction/tree/main#additional-notes)
 
 ## Getting Started
 
@@ -242,17 +240,3 @@ npm install
 ## Technical Documentation
 
 ### ER Diagram
-
-### Additional Notes
-
-1. [::Reservations::Payload::Converter](https://github.com/shabanzo/auction/tree/main/app/services/reservations/payload/converter) - [Here](https://github.com/shabanzo/auction/blob/main/app/services/reservations/upsert.rb#L31-L35) utilizing [Factory Method (Design Pattern)](https://refactoring.guru/design-patterns/factory-method)
-   - [::Reservations::Payload::Converter::Airbnb](https://github.com/shabanzo/auction/tree/main/app/services/reservations/payload/converter/airbnb) - Converts Airbnb payload to a standardized structure.
-   - [::Reservations::Payload::Converter::Bookingcom](https://github.com/shabanzo/auction/tree/main/app/services/reservations/payload/converter/bookingcom) - Converts Bookingcom payload to a standardized structure.
-2. [::Reservations::Update](https://github.com/shabanzo/auction/blob/main/app/services/reservations/update.rb) - Updates reservations and guests using Dry::Transactions. The transaction rolls back if any step fails, ensuring data consistency.
-3. Modules, for example: [::Reservations module](https://github.com/shabanzo/auction/blob/main/app/services/reservations.rb) - Help organize common methods and namespace services based on their domain, such as Reservations.
-4. `Dry::Monads` for handling response properly.
-
-## How to add a new channel?
-
-1. Add a new identifier on [::Reservations::Payload::Identifier](https://github.com/shabanzo/auction/blob/main/app/services/reservations/payload/identifier.rb)
-2. Create a new converter under [::Reservations::Payload::Converter](https://github.com/shabanzo/auction/tree/main/app/services/reservations/payload/converter)
