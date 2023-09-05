@@ -1,3 +1,5 @@
+
+
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
@@ -11,6 +13,12 @@ import { UserService } from '../user.service';
 
 const mockJwtService = {
   sign: jest.fn(),
+};
+
+const mockCookie = jest.fn();
+
+const mockResponse = {
+  cookie: mockCookie,
 };
 
 describe('UserController', () => {
@@ -102,11 +110,13 @@ describe('UserController', () => {
 
       jest.spyOn(userService, 'signin').mockResolvedValue({ ...user, token });
 
-      const result = await userController.Signin(userSigninDto);
+      await userController.Signin(userSigninDto, mockResponse as any);
 
-      expect(result).toBeDefined();
-      expect(result.email).toBe(userSigninDto.email);
-      expect(result.token).toBe(token);
+      expect(mockCookie).toHaveBeenCalledWith('accessToken', token, {
+        httpOnly: true,
+        secure: false,
+        sameSite: 'lax',
+      });
     });
 
     it('should throw HttpException if credentials are incorrect', async () => {
@@ -124,11 +134,17 @@ describe('UserController', () => {
           ),
         );
 
-      await expect(userController.Signin(userSigninDto)).rejects.toThrowError(
-        HttpException,
+      await expect(
+        userController.Signin(userSigninDto, mockResponse as any),
+      ).rejects.toThrowError(
+        new HttpException(
+          'Incorrect username or password',
+          HttpStatus.UNAUTHORIZED,
+        ),
       );
     });
   });
+
 
   describe('Deposit', () => {
     it('should deposit to the user', async () => {

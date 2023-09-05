@@ -1,4 +1,5 @@
 import * as compression from 'compression';
+import * as cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 
 import { ValidationPipe, VersioningType } from '@nestjs/common';
@@ -14,6 +15,7 @@ async function bootstrap() {
   app.enableVersioning({ type: VersioningType.URI });
   app.use(helmet());
   app.use(compression());
+  app.use(cookieParser());
 
   const config = new DocumentBuilder()
     .setTitle('Auction')
