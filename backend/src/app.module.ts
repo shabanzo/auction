@@ -91,6 +91,7 @@ export class AppModule {
       .exclude(
         { path: 'api/v1/user/signin', method: RequestMethod.POST },
         { path: 'api/v1/user/signup', method: RequestMethod.POST },
+        { path: 'api/v1/user/signout', method: RequestMethod.POST },
       )
       .forRoutes(UserController, ItemController, BidController);
   }
