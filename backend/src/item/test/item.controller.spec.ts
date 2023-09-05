@@ -206,7 +206,7 @@ describe('ItemController', () => {
         {
           itemId: publishdItem.id,
         },
-        { delay: publishdItem.timeWindowHours * 3600 },
+        { delay: publishdItem.timeWindowHours * 3600000 },
       );
       expect(result).toEqual(publishdItem);
     });
