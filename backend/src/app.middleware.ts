@@ -23,11 +23,8 @@ export class isAuthenticated implements NestMiddleware {
   ) {}
   async use(req: UserRequest, _res: Response, next: NextFunction) {
     try {
-      if (
-        req.headers.authorization &&
-        req.headers.authorization.startsWith('Bearer')
-      ) {
-        const token = req.headers.authorization.split(' ')[1];
+      if (req.cookies && req.cookies.accessToken) {
+        const token = req.cookies.accessToken;
         const decoded = await this.jwt.verify(token);
         const user = await this.userService.findByEmail(decoded.email);
         if (user) {

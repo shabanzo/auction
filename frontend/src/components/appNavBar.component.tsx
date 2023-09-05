@@ -13,8 +13,11 @@ interface NavigationBarProps {
 
 const AppNavBar: React.FC<NavigationBarProps> = ({ isLoggedIn, userEmail }) => {
   const handleSignOut = () => {
-    UserService.signout();
-    window.location.reload();
+    UserService.signout().then((response) => {
+      if (response && response.status === 200) {
+        window.location.reload();
+      }
+    });
   };
 
   return (

@@ -13,6 +13,12 @@ const mockJwtService = {
   sign: jest.fn(),
 };
 
+const mockCookie = jest.fn();
+
+const mockResponse = {
+  cookie: mockCookie,
+};
+
 describe('UserController', () => {
   let userController: UserController;
   let userService: UserService;
@@ -82,6 +88,14 @@ describe('UserController', () => {
     });
   });
 
+  describe('Signout', () => {
+    it('should sign out a user', async () => {
+      await userController.Signout(mockResponse as any);
+
+      expect(mockCookie).toHaveBeenCalledWith('accessToken', '');
+    });
+  });
+
   describe('Signin', () => {
     it('should sign in a user', async () => {
       const userSigninDto: UserSigninDto = {
@@ -102,11 +116,12 @@ describe('UserController', () => {
 
       jest.spyOn(userService, 'signin').mockResolvedValue({ ...user, token });
 
-      const result = await userController.Signin(userSigninDto);
+      await userController.Signin(userSigninDto, mockResponse as any);
 
-      expect(result).toBeDefined();
-      expect(result.email).toBe(userSigninDto.email);
-      expect(result.token).toBe(token);
+      expect(mockCookie).toHaveBeenCalledWith('accessToken', token, {
+        httpOnly: true,
+        domain: undefined,
+      });
     });
 
     it('should throw HttpException if credentials are incorrect', async () => {
@@ -124,8 +139,13 @@ describe('UserController', () => {
           ),
         );
 
-      await expect(userController.Signin(userSigninDto)).rejects.toThrowError(
-        HttpException,
+      await expect(
+        userController.Signin(userSigninDto, mockResponse as any),
+      ).rejects.toThrowError(
+        new HttpException(
+          'Incorrect username or password',
+          HttpStatus.UNAUTHORIZED,
+        ),
       );
     });
   });

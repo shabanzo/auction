@@ -1,21 +1,10 @@
 import { UserRequest } from 'app.middleware';
+import { Response } from 'express';
 
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, Req, Res } from '@nestjs/common';
 import {
-  Body,
-  Controller,
-  Get,
-  HttpCode,
-  HttpStatus,
-  Post,
-  Req,
-} from '@nestjs/common';
-import {
-  ApiBearerAuth,
-  ApiConflictResponse,
-  ApiCreatedResponse,
-  ApiOkResponse,
-  ApiTags,
-  ApiUnauthorizedResponse,
+    ApiBearerAuth, ApiConflictResponse, ApiCreatedResponse, ApiOkResponse, ApiTags,
+    ApiUnauthorizedResponse
 } from '@nestjs/swagger';
 
 import { UserDepositDto } from './dto/user-deposit.dto';
@@ -50,9 +39,26 @@ export class UserController {
   @ApiOkResponse({ description: 'User authenticated successfully' })
   @ApiUnauthorizedResponse({ description: 'Incorrect username or password' })
   @HttpCode(HttpStatus.OK)
-  async Signin(@Body() userSigninDto: UserSigninDto): Promise<any> {
+  async Signin(
+    @Body() userSigninDto: UserSigninDto,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<any> {
     const result = await this.userService.signin(userSigninDto);
+    res.cookie('accessToken', result.token, {
+      httpOnly: true,
+      domain: process.env.CLIENT_DOMAIN,
+    });
+    delete result.token;
     return result;
+  }
+
+  @Post('/signout')
+  @ApiOkResponse({ description: 'User signed out successfully' })
+  @HttpCode(HttpStatus.OK)
+  async Signout(
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<any> {
+    res.cookie('accessToken', '');
   }
 
   @Post('/deposit')

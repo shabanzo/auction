@@ -25,6 +25,7 @@ describe('isAuthenticated Middleware', () => {
     } as unknown as UserService;
 
     mockRequest = {
+      cookies: {},
       headers: {},
     } as unknown as Request;
 
@@ -35,10 +36,11 @@ describe('isAuthenticated Middleware', () => {
     middleware = new isAuthenticated(mockJwtService, mockUserService);
   });
 
-  it('should set user on request object if a valid token is provided', async () => {
+  it('should set user on request object if a valid token is provided via cookies', async () => {
     const mockUser = { id: 1, email: 'test@example.com' } as User;
 
-    mockRequest.headers.authorization = 'Bearer valid-token';
+    mockRequest.cookies.accessToken = 'valid-token';
+
     (mockJwtService.verify as jest.Mock).mockResolvedValue({
       email: mockUser.email,
     });
@@ -55,7 +57,8 @@ describe('isAuthenticated Middleware', () => {
   });
 
   it('should throw UNAUTHORIZED if the token is valid but user not found', async () => {
-    mockRequest.headers.authorization = 'Bearer valid-token';
+    mockRequest.cookies.accessToken = 'valid-token';
+
     (mockJwtService.verify as jest.Mock).mockResolvedValue({
       email: 'nonexistent@example.com',
     });
@@ -71,7 +74,7 @@ describe('isAuthenticated Middleware', () => {
     expect(mockNextFunction).not.toHaveBeenCalled();
   });
 
-  it('should throw NOT_FOUND if no token is found in the request', async () => {
+  it('should throw UNAUTHORIZED if no token is found in the cookies', async () => {
     await expect(() =>
       middleware.use(
         mockRequest as UserRequest,
@@ -82,8 +85,9 @@ describe('isAuthenticated Middleware', () => {
     expect(mockNextFunction).not.toHaveBeenCalled();
   });
 
-  it('should throw UNAUTHORIZED if an invalid token is provided', async () => {
-    mockRequest.headers.authorization = 'Bearer invalid-token';
+  it('should throw UNAUTHORIZED if an invalid token is provided via cookies', async () => {
+    mockRequest.cookies.accessToken = 'invalid-token';
+
     (mockJwtService.verify as jest.Mock).mockResolvedValue(
       new Error('Invalid token'),
     );
