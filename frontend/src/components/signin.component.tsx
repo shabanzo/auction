@@ -25,11 +25,13 @@ const Signin = () => {
     setLoading(true);
 
     try {
-      const response = await UserService.signin(values);
-      if (response) {
-        navigate('/profile');
-        window.location.reload();
-      }
+      await UserService.signin(values).then((response) => {
+        if (response && response.status === 200) {
+          navigate('/profile');
+          window.location.reload();
+          UserService.updateCurrentUser();
+        }
+      });
     } catch (error: any) {
       const resMessage =
         (error.response &&

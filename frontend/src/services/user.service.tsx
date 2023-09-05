@@ -1,6 +1,5 @@
 import axios, { AxiosResponse } from 'axios';
 
-import authHeader from './auth.header';
 import { User } from './interface';
 
 const API_URL = 'http://localhost:4000/api/v1/user/';
@@ -11,19 +10,29 @@ interface authParams {
 }
 class UserService {
   signin(authParams: authParams): Promise<AxiosResponse<User>> {
-    return axios.post<User>(API_URL + 'signin', authParams).then((response) => {
-      if (response.data.token) {
-        const { token, ...userData } = response.data;
-        document.cookie = `token=${token}`;
-        localStorage.setItem('user', JSON.stringify(userData));
-      }
+    return axios
+      .post<User>(API_URL + 'signin', authParams, { withCredentials: true })
+      .then((response) => {
+        if (response.data) {
+          localStorage.setItem('user', JSON.stringify(response.data));
+        }
 
-      return response;
-    });
+        return response;
+      });
   }
 
-  signout(): void {
-    localStorage.removeItem('user');
+  signout(): Promise<AxiosResponse<User>> {
+    return axios
+      .post<User>(API_URL + 'signout', {
+        withCredentials: true,
+      })
+      .then((response) => {
+        if (response.status === 200) {
+          localStorage.removeItem('user');
+        }
+
+        return response;
+      });
   }
 
   signup(authParams: authParams): Promise<AxiosResponse<User>> {
@@ -35,10 +44,9 @@ class UserService {
     return userString ? JSON.parse(userString) : null;
   }
 
-  updateUserData() {
-    const headers = authHeader();
+  updateCurrentUser() {
     axios
-      .get<User>(API_URL + 'myProfile', { headers })
+      .get<User>(API_URL + 'myProfile', { withCredentials: true })
       .then((response) => {
         if (response.status === 200) {
           if (response.data.walletBalance !== undefined) {
@@ -55,10 +63,8 @@ class UserService {
   }
 
   deposit(amount: number): Promise<AxiosResponse<User>> {
-    const headers = authHeader();
-
     return axios
-      .post<User>(API_URL + 'deposit', { amount }, { headers })
+      .post<User>(API_URL + 'deposit', { amount }, { withCredentials: true })
       .then((response) => {
         if (response.status === 200) {
           if (response.data.walletBalance !== undefined) {
