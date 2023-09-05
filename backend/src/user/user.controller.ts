@@ -1,23 +1,10 @@
 import { UserRequest } from 'app.middleware';
 import { Response } from 'express';
 
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, Req, Res } from '@nestjs/common';
 import {
-  Body,
-  Controller,
-  Get,
-  HttpCode,
-  HttpStatus,
-  Post,
-  Req,
-  Res,
-} from '@nestjs/common';
-import {
-  ApiBearerAuth,
-  ApiConflictResponse,
-  ApiCreatedResponse,
-  ApiOkResponse,
-  ApiTags,
-  ApiUnauthorizedResponse,
+    ApiBearerAuth, ApiConflictResponse, ApiCreatedResponse, ApiOkResponse, ApiTags,
+    ApiUnauthorizedResponse
 } from '@nestjs/swagger';
 
 import { UserDepositDto } from './dto/user-deposit.dto';
@@ -63,6 +50,15 @@ export class UserController {
     });
     delete result.token;
     return result;
+  }
+
+  @Post('/signout')
+  @ApiOkResponse({ description: 'User signed out successfully' })
+  @HttpCode(HttpStatus.OK)
+  async Signout(
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<any> {
+    res.cookie('accessToken', '');
   }
 
   @Post('/deposit')

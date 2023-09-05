@@ -88,6 +88,14 @@ describe('UserController', () => {
     });
   });
 
+  describe('Signout', () => {
+    it('should sign out a user', async () => {
+      await userController.Signout(mockResponse as any);
+
+      expect(mockCookie).toHaveBeenCalledWith('accessToken', '');
+    });
+  });
+
   describe('Signin', () => {
     it('should sign in a user', async () => {
       const userSigninDto: UserSigninDto = {
