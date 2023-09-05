@@ -1,10 +1,23 @@
 import { UserRequest } from 'app.middleware';
 import { Response } from 'express';
 
-import { Body, Controller, Get, HttpCode, HttpStatus, Post, Req, Res } from '@nestjs/common';
 import {
-    ApiBearerAuth, ApiConflictResponse, ApiCreatedResponse, ApiOkResponse, ApiTags,
-    ApiUnauthorizedResponse
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Req,
+  Res,
+} from '@nestjs/common';
+import {
+  ApiBearerAuth,
+  ApiConflictResponse,
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiTags,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 
 import { UserDepositDto } from './dto/user-deposit.dto';
@@ -39,14 +52,17 @@ export class UserController {
   @ApiOkResponse({ description: 'User authenticated successfully' })
   @ApiUnauthorizedResponse({ description: 'Incorrect username or password' })
   @HttpCode(HttpStatus.OK)
-  async Signin(@Body() userSigninDto: UserSigninDto,
-  @Res({passthrough: true}) res: Response): Promise<any> {
+  async Signin(
+    @Body() userSigninDto: UserSigninDto,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<any> {
     const result = await this.userService.signin(userSigninDto);
     res.cookie('accessToken', result.token, {
       httpOnly: true,
-      secure: false,
-      sameSite: 'lax'
-    })
+      domain: process.env.CLIENT_DOMAIN,
+    });
+    delete result.token;
+    return result;
   }
 
   @Post('/deposit')

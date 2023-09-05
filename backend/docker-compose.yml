@@ -8,16 +8,8 @@ services:
       target: development
     volumes:
       - .:/usr/src/app
-    environment:
-      APP_PORT: ${APP_PORT}
-      JWT_SECRET: ${JWT_SECRET}
-      REDIS_HOST: ${REDIS_HOST}
-      REDIS_PORT: ${REDIS_PORT}
-      DB_NAME: ${DB_NAME}
-      DB_USER: ${DB_USER}
-      DB_PASS: ${DB_PASS}
-      DB_HOST: ${DB_HOST}
-      DB_PORT: ${DB_PORT}
+    env_file:
+      - ./.env
     command: npm run dev
     ports:
       - ${APP_PORT}:${APP_PORT}

@@ -1,7 +1,12 @@
 import { NextFunction, Request, Response } from 'express';
 import { User } from 'user/user.entity';
 
-import { HttpException, HttpStatus, Injectable, NestMiddleware } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NestMiddleware,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
 import { UserService } from './user/user.service';
@@ -18,10 +23,7 @@ export class isAuthenticated implements NestMiddleware {
   ) {}
   async use(req: UserRequest, _res: Response, next: NextFunction) {
     try {
-      if (
-        req.cookies &&
-        req.cookies.accessToken
-      ) {
+      if (req.cookies && req.cookies.accessToken) {
         const token = req.cookies.accessToken;
         const decoded = await this.jwt.verify(token);
         const user = await this.userService.findByEmail(decoded.email);

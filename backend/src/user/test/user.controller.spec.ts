@@ -1,5 +1,3 @@
-
-
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
@@ -114,8 +112,7 @@ describe('UserController', () => {
 
       expect(mockCookie).toHaveBeenCalledWith('accessToken', token, {
         httpOnly: true,
-        secure: false,
-        sameSite: 'lax',
+        domain: undefined,
       });
     });
 
@@ -144,7 +141,6 @@ describe('UserController', () => {
       );
     });
   });
-
 
   describe('Deposit', () => {
     it('should deposit to the user', async () => {
